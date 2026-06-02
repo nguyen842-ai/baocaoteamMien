@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý KPI Tuyến Chợ</title>
+    <title>Quản Lý KPI Tuyến Chợ truyền thống- Hồ Chí Minh</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f0f2f5; color: #333; overflow: hidden; }
@@ -36,7 +36,7 @@
         .main-header-box { display: flex; align-items: center; margin-bottom: 20px; gap: 15px; }
         .main-content h1 { font-size: 1.8rem; color: #1e293b; }
 
-        /* Nút tròn menu mở rộng */
+        /* Nút tròn menu */
         .toggle-sidebar-container { display: flex; align-items: center; gap: 8px; background-color: #f0f2f5; padding: 4px; border-radius: 30px; }
         .toggle-sidebar-btn { background-color: #ffffff; color: #333333; border: 1px solid #e2e8f0; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: background-color 0.2s; padding: 0; margin: 0; }
         .toggle-sidebar-btn:hover { background-color: #f8fafc; }
@@ -58,7 +58,7 @@
         .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .table-header h3 { color: #475569; margin: 0; }
         
-        /* Khung xuất mây */
+        /* Khung xuất hệ thống */
         .cloud-export-box { background: #e0f2fe; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #bfdbfe; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;}
         .cloud-export-box label { font-size: 0.85rem; font-weight: bold; color:#1e3a8a;}
         .cloud-export-box input[type="date"], .cloud-export-box select { padding: 6px; border-radius: 4px; border: 1px solid #93c5fd; outline:none; background: white;}
@@ -99,7 +99,7 @@
                     <select id="staff-name" required></select>
                 </div>
                 
-                <h3 class="section-title">2. Danh sách Chợ đã đi</h3>
+                <h3 class="section-title">2. Danh sách Chợ </h3>
                 <div id="route-markets-list"></div>
                 <datalist id="market-suggestions"></datalist>
 
@@ -116,9 +116,9 @@
                     <div class="form-group"><label>Khô 500gr:</label><input type="number" id="p7" step="any" min="0" value="0"></div>
                     <div class="form-group"><label>Khô 1kg:</label><input type="number" id="p8" step="any" min="0" value="0"></div>
                     <div class="form-group"><label>Dong 40gr:</label><input type="number" id="p9" step="any" min="0" value="0"></div>
-                    <div class="form-group"><label>Dong 200gr:</label><input type="number" id="p10" step="any" min="0" value="0"></div>
-                    <div class="form-group"><label>Dong 480gr:</label><input type="number" id="p11" step="any" min="0" value="0"></div>
-                    <div class="form-group"><label>Tươi Song Lân 500gr:</label><input type="number" id="p12" step="any" min="0" value="0"></div>
+                    <div class="form-group"><label>Dong 200gr:</label><input type="number" id="p10" min="0" step="any" value="0"></div>
+                    <div class="form-group"><label>Dong 480gr:</label><input type="number" id="p11" min="0" step="any" value="0"></div>
+                    <div class="form-group"><label>Tươi Song Lân 500gr:</label><input type="number" id="p12" min="0" step="any" value="0"></div>
                 </div>
 
                 <h3 class="section-title">4. Tổng Quà tặng / Khuyến mãi</h3>
@@ -127,7 +127,7 @@
                     <div class="form-group"><label>FOC Miến (Gói):</label><input type="number" id="foc-mien-kho" min="0" required value="0"></div>
                 </div>
 
-                <button type="submit" id="add-btn">Gửi Báo Cáo Tuyến</button>
+                <button type="submit" id="add-btn">Gửi Báo Cáo</button>
             </form>
             <button id="clear-btn" class="secondary-btn">Xóa Dữ Liệu Bộ Nhớ Tạm</button>
         </div>
@@ -138,7 +138,7 @@
                     <button type="button" class="toggle-sidebar-btn" onclick="toggleSidebarPanel()" id="toggle-sidebar-btn">✕</button>
                     <span class="toggle-text-hint" id="toggle-text-hint">Thu gọn khu vực nhập</span>
                 </div>
-                <h1>Dashboard Quản Lý KPI Tuyến Chợ</h1>
+                <h1>Quản Lý KPI Tuyến Chợ truyền thống- Hồ Chí Minh</h1>
             </div>
             
             <div class="kpi-container" id="kpi-board"></div>
@@ -164,15 +164,15 @@
                             <tr>
                                 <th>Ngày</th>
                                 <th>Nhân Viên</th>
-                                <th style="min-width: 250px;">Chi Tiết Tuyến Chợ (PV/Mới/Đơn)</th>
-                                <th class="narrow-col">Tổng KH đang chăm sóc</th>
-                                <th class="narrow-col highlight-target">Số lượng KH Mục tiêu</th>
-                                <th class="narrow-col highlight-actual">Tổng KH Mở mới</th>
-                                <th class="narrow-col">Tổng KH lên đơn</th>
-                                <th style="background-color:#dbeafe; color:#1e40af; text-align: center; width: 75px;">Tổng SP đã bán (thùng)</th>
+                                <th style="min-width: 250px;">Chi Tiết Tuyến Chợ (KH đang phục vụ/Mở Mới/Lên Đơn)</th>
+                                <th class="narrow-col">Tổng KH trong chợ</th>
+                                <th class="narrow-col highlight-target">Mục tiêu mở mới</th>
+                                <th class="narrow-col highlight-actual">Tổng KH mở mới</th>
+                                <th class="narrow-col">Tổng KH Lên đơn</th>
+                                <th style="background-color:#dbeafe; color:#1e40af; text-align: center; width: 75px;">Tổng SP đã bán (Thùng)</th>
                                 <th style="min-width: 160px;">Chi tiết SP bán</th>
                                 <th class="narrow-col" style="background-color: #fef3c7;">FOC M150</th>
-                                <th class="narrow-col" style="background-color: #fef3c7;">FOC khô 200gr</th>
+                                <th class="narrow-col" style="background-color: #fef3c7;">FOC Khô 200gr</th>
                                 <th style="text-align: center;">Yêu cầu khác</th>
                             </tr>
                         </thead>
@@ -605,7 +605,6 @@
             const hint = document.getElementById('toggle-text-hint');
             
             sidebar.classList.toggle('hidden');
-            
             if (sidebar.classList.contains('hidden')) {
                 btn.innerText = '☰'; hint.innerText = 'Mở rộng trình đơn';
             } else {
@@ -626,23 +625,30 @@
             const strThu = days[dateObj.getDay()];
 
             const planned = ROUTE_PLAN.filter(p => p.NV.toUpperCase() === staff.toUpperCase() && p.date.toUpperCase() === strThu.toUpperCase());
-            planned.forEach(p => addMarketRow(p.Market, p.Target));
+            
+            // CẬP NHẬT: Gửi thêm cờ true (isDefault = true) báo đây là chợ nằm trong tuyến cố định
+            planned.forEach(p => addMarketRow(p.Market, p.Target, true));
             if(planned.length === 0) {
                 container.innerHTML = '<p style="font-size:0.85rem; color:#94a3b8; font-style:italic;">Không có lịch đi tuyến cố định vào ngày này.</p>';
             }
         }
 
-        function addMarketRow(marketName = '', target = 0) {
+        // CẬP NHẬT: Nhận biến isDefault để biết chợ này có được phép ẩn nút xóa không
+        function addMarketRow(marketName = '', target = 0, isDefault = false) {
             const container = document.getElementById('route-markets-list');
             if(container.querySelector('p')) container.innerHTML = ''; 
 
             const row = document.createElement('div');
             row.className = 'market-entry';
 
+            // Nếu là chợ trong tuyến (isDefault == true) thì ẩn nút xóa bằng style="display:none;"
+            const removeBtnStyle = isDefault ? 'style="display:none;"' : '';
+            const isReadOnly = isDefault ? 'readonly style="background-color:#f1f5f9; color:#1e40af;"' : '';
+
             row.innerHTML = `
-                <div class="btn-remove" onclick="this.parentElement.remove()" title="Xóa chợ này">x</div>
+                <div class="btn-remove" ${removeBtnStyle} onclick="this.parentElement.remove()" title="Xóa chợ này">x</div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center; gap: 5px;">
-                    <input type="text" class="m-name" value="${marketName}" placeholder="Gõ tên chợ..." list="market-suggestions" required style="font-weight:bold; color:#1e40af; flex:1;">
+                    <input type="text" class="m-name" value="${marketName}" placeholder="Gõ tên chợ..." list="market-suggestions" required ${isReadOnly} style="font-weight:bold; color:#1e40af; flex:1;">
                     <span style="font-size:0.75rem; color:#d97706; font-weight:bold; white-space:nowrap; min-width: 70px; text-align:right;">Mục tiêu: <span class="m-target">${target}</span></span>
                 </div>
                 <div style="display:flex; gap:10px;">
@@ -652,17 +658,19 @@
                 </div>
             `;
 
-            row.querySelector('.m-name').addEventListener('input', function() {
-                const staff = document.getElementById('staff-name').value;
-                row.querySelector('.m-target').innerText = getTargetForMarket(staff, this.value);
-            });
+            if(!isDefault) {
+                row.querySelector('.m-name').addEventListener('input', function() {
+                    const staff = document.getElementById('staff-name').value;
+                    row.querySelector('.m-target').innerText = getTargetForMarket(staff, this.value);
+                });
+            }
 
             container.appendChild(row);
         }
 
         document.getElementById('work-date').addEventListener('change', renderRouteMarkets);
         document.getElementById('staff-name').addEventListener('change', renderRouteMarkets);
-        document.getElementById('add-extra-market-btn').addEventListener('click', () => addMarketRow('', 0));
+        document.getElementById('add-extra-market-btn').addEventListener('click', () => addMarketRow('', 0, false)); // Chợ thêm tay luôn có nút xóa
 
         let marketData = JSON.parse(localStorage.getItem('marketDashboardData')) || [];
 
@@ -800,7 +808,6 @@
             const btn = document.getElementById('add-btn');
             btn.innerText = 'Đang gửi dữ liệu lên mây...'; btn.disabled = true;
 
-            // CẬP NHẬT: Thay đổi từ parseFloat thay vì parseInt để lấy số lẻ từ các ô sản phẩm
             const getNum = (id) => parseFloat(document.getElementById(id).value) || 0;
             const dateInput = document.getElementById('work-date').value;
             const dateObj = new Date(dateInput);
@@ -860,7 +867,7 @@
                             staff: targetItem.staff,
                             name: targetItem.name
                         })
-                    }).then(() => { alert("Đã gửi yêu cầu xóa lên Google Sheets."); });
+                    }).then(() => { alert("Đã gửi yêu cầu xóa lên hệ thống!"); });
                 }
             }
         }
@@ -886,7 +893,7 @@
             fetch(GOOGLE_SCRIPT_URL)
             .then(res => res.json())
             .then(data => {
-                if(!data || data.length <= 1) { alert("Không có dữ liệu trên mây!"); btn.innerText = "🔍 Lọc"; btn.disabled = false; return; }
+                if(!data || data.length <= 1) { alert("Không có dữ liệu trên hệ thống!"); btn.innerText = "🔍 Lọc"; btn.disabled = false; return; }
 
                 let filteredCloudData = [];
 
@@ -908,7 +915,7 @@
                                 thu: thuValue, ngay: ngay, thang: thang, nam: nam,
                                 staff: staffName, name: r[5], khTuyen: parseInt(r[6])||0,
                                 target: parseInt(r[7])||0, khMoi: parseInt(r[8])||0, khDon: parseInt(r[9])||0,
-                                totalSP: parseFloat(r[10])||0, // Đồng bộ số lẻ khi lấy từ mây
+                                totalSP: parseFloat(r[10])||0, 
                                 p1: parseFloat(r[11])||0, p2: parseFloat(r[12])||0, p3: parseFloat(r[13])||0, p4: parseFloat(r[14])||0,
                                 p5: parseFloat(r[15])||0, p6: parseFloat(r[16])||0, p7: parseFloat(r[17])||0, p8: parseFloat(r[18])||0,
                                 p9: parseFloat(r[19])||0, p10: parseFloat(r[20])||0, p11: parseFloat(r[21])||0, p12: parseFloat(r[22])||0,
@@ -922,11 +929,11 @@
                 marketData = filteredCloudData;
                 updateDashboard();
 
-                alert(`Đã tìm thấy và hiển thị ${filteredCloudData.length} dòng dữ liệu từ Google Sheets.`);
+                alert(`Đã tìm thấy và hiển thị ${filteredCloudData.length} dòng dữ liệu từ Hệ thống.`);
                 btn.innerText = "🔍 Lọc"; btn.disabled = false;
             })
             .catch(err => {
-                alert("Lỗi kết nối mây!");
+                alert("Lỗi kết nối Hệ thống!");
                 btn.innerText = "🔍 Lọc"; btn.disabled = false;
             });
         }
@@ -934,7 +941,7 @@
         // --- HÀM TẢI FILE EXCEL TRỰC TIẾP TỪ BẢNG ĐANG HIỂN THỊ ---
         function downloadFilteredExcel() {
             if(marketData.length === 0) { 
-                alert("Bảng đang trống! Vui lòng chọn ngày và bấm '🔍 Lọc' dữ liệu từ mây xuống trước khi bấm Tải về."); 
+                alert("Bảng đang trống! Vui lòng chọn ngày và bấm '🔍 Lọc' dữ liệu từ hệ thống xuống trước khi bấm Tải về."); 
                 return; 
             }
             
