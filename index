@@ -94,18 +94,18 @@
 
                 <h3 class="section-title">Sản Phẩm Bán (Thùng)</h3>
                 <div class="products-grid">
-                    <div class="form-group"><label>Miến tươi 200gr:</label><input type="number" id="p1" min="0" value="0"></div>
-                    <div class="form-group"><label>Miến tươi 450gr:</label><input type="number" id="p2" min="0" value="0"></div>
-                    <div class="form-group"><label>Miến tươi 1kg:</label><input type="number" id="p3" min="0" value="0"></div>
-                    <div class="form-group"><label>Miến tươi 3kg:</label><input type="number" id="p4" min="0" value="0"></div>
-                    <div class="form-group"><label>MK đậu xanh 80gr:</label><input type="number" id="p5" min="0" value="0"></div>
-                    <div class="form-group"><label>MK đậu xanh 200gr:</label><input type="number" id="p6" min="0" value="0"></div>
-                    <div class="form-group"><label>MK đậu xanh 500gr:</label><input type="number" id="p7" min="0" value="0"></div>
-                    <div class="form-group"><label>MK đậu xanh 1kg:</label><input type="number" id="p8" min="0" value="0"></div>
-                    <div class="form-group"><label>Miến Dong khô 40gr:</label><input type="number" id="p9" min="0" value="0"></div>
-                    <div class="form-group"><label>Miến Dong khô 200gr:</label><input type="number" id="p10" min="0" value="0"></div>
-                    <div class="form-group"><label>Miến Dong khô 480gr:</label><input type="number" id="p11" min="0" value="0"></div>
-                    <div class="form-group"><label>MT Song Lân 500gr:</label><input type="number" id="p12" min="0" value="0"></div>
+                    <div class="form-group"><label>Tươi 200gr:</label><input type="number" id="p1" min="0" value="0"></div>
+                    <div class="form-group"><label>Tươi 450gr:</label><input type="number" id="p2" min="0" value="0"></div>
+                    <div class="form-group"><label>Tươi 1kg:</label><input type="number" id="p3" min="0" value="0"></div>
+                    <div class="form-group"><label>Tươi 3kg:</label><input type="number" id="p4" min="0" value="0"></div>
+                    <div class="form-group"><label>Khô 80gr:</label><input type="number" id="p5" min="0" value="0"></div>
+                    <div class="form-group"><label>Khô 200gr:</label><input type="number" id="p6" min="0" value="0"></div>
+                    <div class="form-group"><label>Khô 500gr:</label><input type="number" id="p7" min="0" value="0"></div>
+                    <div class="form-group"><label>Khô 1kg:</label><input type="number" id="p8" min="0" value="0"></div>
+                    <div class="form-group"><label>Dong 40gr:</label><input type="number" id="p9" min="0" value="0"></div>
+                    <div class="form-group"><label>Dong 200gr:</label><input type="number" id="p10" min="0" value="0"></div>
+                    <div class="form-group"><label>Dong 480gr:</label><input type="number" id="p11" min="0" value="0"></div>
+                    <div class="form-group"><label>Tươi Song Lân 500gr:</label><input type="number" id="p12" min="0" value="0"></div>
                 </div>
 
                 <h3 class="section-title">Quà tặng / Khuyến mãi (FOC)</h3>
