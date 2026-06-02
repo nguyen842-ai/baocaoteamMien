@@ -43,18 +43,19 @@
         .kpi-val { font-size: 1.4rem; font-weight: bold; color: #059669; }
         .kpi-target { font-size: 0.85rem; color: #64748b; margin-top: 5px; }
         .kpi-vol { font-size: 1.4rem; font-weight: bold; color: #2563eb; }
+        .kpi-foc { font-size: 1.2rem; font-weight: bold; color: #d97706; margin-top: 3px; }
 
         /* Bảng Báo Cáo */
         .table-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .table-header h3 { color: #475569; margin: 0; }
-        .export-btn { width: auto; margin: 0; background-color: #64748b; padding: 8px 15px; font-size: 0.9rem; }
-        .export-btn:hover { background-color: #475569; }
+        .export-btn { width: auto; margin: 0; background-color: #10b981; padding: 8px 15px; font-size: 0.9rem; color: white;}
+        .export-btn:hover { background-color: #059669; }
         
-        /* Khung xuất mây */
-        .cloud-export-box { background: #e0f2fe; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #bfdbfe; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;}
+        /* Khung xuất mây tối ưu bổ sung thêm lọc nhân viên */
+        .cloud-export-box { background: #e0f2fe; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #bfdbfe; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;}
         .cloud-export-box label { font-size: 0.85rem; font-weight: bold; color:#1e3a8a;}
-        .cloud-export-box input[type="date"] { padding: 5px; border-radius: 4px; border: 1px solid #93c5fd; outline:none;}
+        .cloud-export-box input[type="date"], .cloud-export-box select { padding: 6px; border-radius: 4px; border: 1px solid #93c5fd; outline:none; background: white;}
 
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
@@ -63,10 +64,9 @@
         th.narrow-col, td.narrow-col { width: 65px; text-align: center; }
         tr:hover { background-color: #f1f5f9; }
         
-        /* ĐỔI STYLE NÚT YÊU CẦU XÓA THÀNH MÀU CAM KHÁC BIỆT */
         .delete-btn { background-color: #f97316; padding: 6px 10px; font-size: 0.75rem; margin: 0; width: auto; color:white; border-radius:4px; border:none; cursor:pointer; font-weight: bold;}
         .delete-btn:hover { background-color: #ea580c; }
-        .row-blur { opacity: 0.5; background-color: #fee2e2 !important; } /* Giao diện khi chờ xóa */
+        .row-blur { opacity: 0.5; background-color: #fee2e2 !important; }
 
         .highlight-target { background-color: #fffbeb; font-weight: bold; color: #d97706; text-align: center;}
         .highlight-actual { background-color: #ecfdf5; font-weight: bold; color: #059669; text-align: center;}
@@ -132,15 +132,17 @@
 
             <div class="table-box">
                 <div class="cloud-export-box">
-                    <strong style="color: #1e3a8a; font-size:1rem;">☁️ Xuất Dữ Liệu Tổng Từ Google Sheets:</strong>
-                    <label>Từ ngày: <input type="date" id="export-start"></label>
-                    <label>Đến ngày: <input type="date" id="export-end"></label>
-                    <button type="button" id="cloud-export-btn" onclick="exportFromCloud()" style="width: auto; margin: 0; background-color: #3b82f6; color: white; padding: 6px 15px;">⬇️ Lọc & Tải Về</button>
+                    <strong style="color: #1e3a8a; font-size:0.95rem;">☁️ Xuất Dữ Liệu Tổng Từ Google Sheets:</strong>
+                    <label>Từ: <input type="date" id="export-start"></label>
+                    <label>Đến: <input type="date" id="export-end"></label>
+                    <label>Nhân viên: <select id="export-staff-filter"></select></label>
+                    
+                    <button type="button" id="cloud-filter-btn" onclick="filterFromCloud()" style="width: auto; margin: 0; background-color: #2563eb; color: white; padding: 6px 15px;">🔍 Lọc</button>
+                    <button type="button" id="cloud-download-btn" onclick="downloadFilteredExcel()" style="width: auto; margin: 0; background-color: #10b981; color: white; padding: 6px 15px;">📥 Tải về</button>
                 </div>
 
                 <div class="table-header">
-                    <h3>Bảng Báo Cáo Tạm Thời (Chỉ Lưu Trên Máy Này)</h3>
-                    <button class="export-btn" onclick="exportLocalToExcel()">Xuất bảng dưới đây</button>
+                    <h3 style="color:#1e3a8a; font-weight: bold;">📋 Bảng Xem Trước</h3>
                 </div>
                 
                 <div class="table-responsive">
@@ -156,8 +158,8 @@
                                 <th class="narrow-col">Tổng Đơn</th>
                                 <th style="background-color:#dbeafe; color:#1e40af; text-align: center; width: 75px;">Tổng SP</th>
                                 <th style="min-width: 160px;">Sản Phẩm Đã Bán</th>
-                                <th class="narrow-col">M150</th>
-                                <th class="narrow-col">Miến Gói</th>
+                                <th class="narrow-col" style="background-color: #fef3c7;">M150</th>
+                                <th class="narrow-col" style="background-color: #fef3c7;">Miến Gói</th>
                                 <th style="text-align: center;">Hành động</th>
                             </tr>
                         </thead>
@@ -169,7 +171,7 @@
     </div>
 
     <script>
-        // --- BƯỚC 1: DỮ LIỆU CỐ ĐỊNH (Bỏ qua DB theo yêu cầu, bạn tự dán lại mảng cũ vào đây nhé) ---
+        // --- BƯỚC 1: DỮ LIỆU CỐ ĐỊNH (Bạn tự dán lại mảng DB cũ vào đây) ---
         const ROUTE_PLAN = [{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "1",  Market: "Chợ Thiếc", EstC: "7", Target: "3"},
 {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "6",  Market: "Chợ Phú Thọ", EstC: "8", Target: "6"},
 {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "2",  Market: "Chợ Phú Trung", EstC: "8", Target: "4"},
@@ -566,16 +568,16 @@
 "Chợ Linh Xuân",
 "Chợ Xuân Hiệp",
 "Chợ Tam Hà",
-"Chợ nhỏ Hoàng Diệu",
 ];
 
-        // --- BƯỚC 2: LINK GOOGLE APP SCRIPT ---
+        // --- BƯỚC 2: LINK GOOGLE APP SCRIPT (Bạn dán lại link /exec vào đây nhé) ---
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJ3-Ek_YkjBUQtQ6wLW8uhb6u2oZ14wu2AsWoLNvGx9Ua9EljKefYsOBl3ee81KOAo/exec'; 
 
         // ==============================================================
         
-        // Nạp Dữ Liệu Khởi Tạo
+        // Nạp Dữ Liệu Khởi Tạo Giao Diện
         document.getElementById('staff-name').innerHTML = '<option value="" disabled selected>-- Chọn Nhân Viên --</option>' + ALL_STAFFS.map(staff => `<option value="${staff}">${staff}</option>`).join('');
+        document.getElementById('export-staff-filter').innerHTML = '<option value="ALL">-- Tất cả nhân viên --</option>' + ALL_STAFFS.map(staff => `<option value="${staff}">${staff}</option>`).join('');
         document.getElementById('market-suggestions').innerHTML = ALL_MARKETS.map(market => `<option value="${market}"></option>`).join('');
         document.getElementById('work-date').valueAsDate = new Date();
 
@@ -637,11 +639,13 @@
 
         let marketData = JSON.parse(localStorage.getItem('marketDashboardData')) || [];
 
-        // --- HÀM CẬP NHẬT GIAO DIỆN CHÍNH ---
+        // --- HÀM CẬP NHẬT GIAO DIỆN CHÍNH (ĐỔ SỐ LIỆU XUỐNG BẢNG XEM TRƯỚC) ---
         function updateDashboard() {
             localStorage.setItem('marketDashboardData', JSON.stringify(marketData));
             let tableHTML = '';
             
+            let totalPV = 0, totalMT = 0, totalMoi = 0, totalDon = 0, totalSPAll = 0, totalM150All = 0, totalMienAll = 0;
+
             marketData.forEach((item, index) => {
                 const products = [
                     {name: 'MT 200g', val: item.p1}, {name: 'MT 450g', val: item.p2}, {name: 'MT 1kg', val: item.p3}, {name: 'MT 3kg', val: item.p4},
@@ -651,15 +655,27 @@
                 let soldStr = products.filter(p => p.val > 0).map(p => `• ${p.name}: <b>${p.val}</b>`).join('<br>');
                 if(!soldStr) soldStr = '<span class="no-product">Chưa có SP</span>';
 
-                const dateObj = new Date(item.date);
-                const dateStr = `${('0'+dateObj.getDate()).slice(-2)}/${('0'+(dateObj.getMonth()+1)).slice(-2)}`;
+                // Chuẩn hóa hiển thị ngày
+                let dateStr = "";
+                if(item.date && item.date.includes("-")) {
+                    let parts = item.date.split("-");
+                    dateStr = parts[2] + "/" + parts[1];
+                } else {
+                    dateStr = item.ngay + "/" + item.thang;
+                }
+                
                 let formattedMarkets = item.name.replace(/ \| /g, "<br>• ");
 
-                // Kiểm tra xem dòng này có đang ở trạng thái bị yêu cầu xóa không
-                let isDeleted = item.status === "pending_delete";
+                let isDeleted = item.status === "pending_delete" || item.thu === "YÊU CẦU XÓA";
                 let rowClass = isDeleted ? "row-blur" : "";
-                let btnText = isDeleted ? "⏳ Đang xử lý xóa..." : "⚠️ Yêu cầu xóa";
+                let btnText = isDeleted ? "⏳ Đang chờ xóa..." : "⚠️ Yêu cầu xóa";
                 let btnDisabled = isDeleted ? "disabled style='background-color:#94a3b8; cursor:not-allowed;'" : "";
+
+                if (!isDeleted) {
+                    totalPV += item.khTuyen; totalMT += item.target; totalMoi += item.khMoi;
+                    totalDon += item.khDon; totalSPAll += item.totalSP; totalM150All += item.focM150;
+                    totalMienAll += item.focMien;
+                }
 
                 tableHTML += `
                     <tr class="${rowClass}">
@@ -672,8 +688,8 @@
                         <td class="narrow-col">${item.khDon}</td>
                         <td style="color:#1d4ed8; font-weight:bold; text-align:center; font-size:1.1rem;">${item.totalSP}</td>
                         <td class="product-list">${soldStr}</td>
-                        <td class="narrow-col">${item.focM150}</td>
-                        <td class="narrow-col">${item.focMien}</td>
+                        <td class="narrow-col" style="font-weight:bold;">${item.focM150}</td>
+                        <td class="narrow-col" style="font-weight:bold;">${item.focMien}</td>
                         <td style="text-align:center;">
                             <button class="delete-btn" ${btnDisabled} onclick="requestDeleteMarket(${index})">${btnText}</button>
                         </td>
@@ -681,15 +697,37 @@
                 `;
             });
 
+            if(marketData.length > 0) {
+                tableHTML += `
+                    <tr style="background-color: #f8fafc; font-weight: bold; border-top: 2px solid #94a3b8;">
+                        <td colspan="3" style="text-align:right; color:#1e293b;">TỔNG CỘNG ĐÃ LỌC:</td>
+                        <td style="text-align:center;">${totalPV}</td>
+                        <td class="highlight-target">${totalMT}</td>
+                        <td class="highlight-actual">${totalMoi}</td>
+                        <td style="text-align:center;">${totalDon}</td>
+                        <td style="text-align:center; color:#1d4ed8;">${totalSPAll}</td>
+                        <td>-</td>
+                        <td style="text-align:center; background-color:#fef3c7; color:#b45309;">${totalM150All}</td>
+                        <td style="text-align:center; background-color:#fef3c7; color:#b45309;">${totalMienAll}</td>
+                        <td></td>
+                    </tr>
+                `;
+            }
+
             document.querySelector('#data-table tbody').innerHTML = tableHTML;
 
-            // Cập nhật Thẻ KPI
+            // Cập nhật Thẻ KPI phía trên
             let kpiHTML = '';
-            ALL_STAFFS.forEach(staff => {
-                let staffData = marketData.filter(d => d.staff === staff && d.status !== "pending_delete"); // Không tính dòng chờ xóa vào KPI
+            let staffListForKPI = ALL_STAFFS.length > 0 ? ALL_STAFFS : [...new Set(marketData.map(d => d.staff))];
+            
+            staffListForKPI.forEach(staff => {
+                if(!staff) return;
+                let staffData = marketData.filter(d => d.staff === staff && d.status !== "pending_delete" && d.thu !== "YÊU CẦU XÓA"); 
                 let actualMoi = staffData.reduce((sum, d) => sum + d.khMoi, 0);
                 let totalSP = staffData.reduce((sum, d) => sum + d.totalSP, 0);
                 let targetMoi = staffData.reduce((sum, d) => sum + d.target, 0);
+                let staffM150 = staffData.reduce((sum, d) => sum + d.focM150, 0);
+                let staffMien = staffData.reduce((sum, d) => sum + d.focMien, 0);
 
                 kpiHTML += `
                     <div class="kpi-card">
@@ -703,6 +741,10 @@
                                 <div class="kpi-vol">${totalSP}</div>
                                 <div class="kpi-target">Tổng Sản Lượng<br>(Thùng)</div>
                             </div>
+                        </div>
+                        <div style="margin-top:12px; padding-top:10px; border-top:1px dashed #cbd5e1; font-size:0.8rem; color:#475569;">
+                            <div>• Tổng FOC M150: <span class="kpi-foc">${staffM150}</span> lon</div>
+                            <div style="margin-top:2px;">• Tổng FOC Miến: <span class="kpi-foc">${staffMien}</span> gói</div>
                         </div>
                     </div>
                 `;
@@ -779,15 +821,13 @@
             renderRouteMarkets();
         }
 
-        // --- CẬP NHẬT: LOGIC GỬI YÊU CẦU XÓA LÊN MÂY ĐỂ ĐỔI MÀU SHEET ---
         function requestDeleteMarket(index) {
-            if(confirm("Bạn có chắc chắn muốn gửi Yêu cầu xóa dòng này lên hệ thống không? Dòng lỗi sẽ được đánh dấu đỏ trên Google Sheets.")) {
+            if(confirm("Gửi yêu cầu xóa dòng này?")) {
                 let targetItem = marketData[index];
-                targetItem.status = "pending_delete"; // Đổi trạng thái nội bộ
+                targetItem.status = "pending_delete"; 
                 updateDashboard();
 
                 if(GOOGLE_SCRIPT_URL.includes('/exec')) {
-                    // Gửi tín hiệu báo xóa lên Apps Script
                     fetch(GOOGLE_SCRIPT_URL, {
                         method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -795,9 +835,7 @@
                             staff: targetItem.staff,
                             name: targetItem.name
                         })
-                    }).then(() => {
-                        alert("Đã gửi yêu cầu thành công! Vui lòng báo quản lý duyệt xóa.");
-                    });
+                    }).then(() => { alert("Đã gửi yêu cầu xóa lên Google Sheets."); });
                 }
             }
         }
@@ -806,14 +844,15 @@
             if(confirm("Xóa toàn bộ dữ liệu đang hiển thị tạm trên máy này?")) { marketData = []; updateDashboard(); }
         });
 
-        // --- HÀM XUẤT EXCEL TỪ GOOGLE SHEETS ---
-        function exportFromCloud() {
+        // --- CẬP NHẬT: HÀM LỌC DỮ LIỆU TỪ CLOUD ĐỔ XUỐNG BẢNG XEM TRƯỚC ---
+        function filterFromCloud() {
             const startStr = document.getElementById('export-start').value;
             const endStr = document.getElementById('export-end').value;
-            if(!startStr || !endStr) { alert("Vui lòng chọn đầy đủ ngày!"); return; }
+            const staffFilter = document.getElementById('export-staff-filter').value;
 
-            const btn = document.getElementById('cloud-export-btn');
-            const originalText = btn.innerText;
+            if(!startStr || !endStr) { alert("Vui lòng chọn đầy đủ khoảng ngày Từ - Đến!"); return; }
+
+            const btn = document.getElementById('cloud-filter-btn');
             btn.innerText = "⏳ Đang kết nối..."; btn.disabled = true;
 
             const startDate = new Date(startStr); startDate.setHours(0,0,0,0);
@@ -822,55 +861,88 @@
             fetch(GOOGLE_SCRIPT_URL)
             .then(res => res.json())
             .then(data => {
-                if(!data || data.length === 0) { alert("Sheets trống!"); btn.innerText = originalText; btn.disabled = false; return; }
+                if(!data || data.length <= 1) { alert("Không có dữ liệu trên mây!"); btn.innerText = "🔍 Lọc"; btn.disabled = false; return; }
 
-                let headers = data[0];
-                let rowsToExport = [headers];
+                let filteredCloudData = [];
 
+                // Quét dữ liệu từ hàng thứ 2 (bỏ qua hàng tiêu đề)
                 for(let i = 1; i < data.length; i++) {
-                    let row = data[i];
-                    let ngay = row[1], thang = row[2], nam = row[3];
+                    let r = data[i];
+                    let thuValue = r[0]; // Cột Thứ hoặc trạng thái YÊU CẦU XÓA
+                    let ngay = r[1], thang = r[2], nam = r[3];
+                    let staffName = r[4];
+
                     if(ngay && thang && nam) {
                         let rowDate = new Date(nam, thang - 1, ngay);
-                        if(rowDate >= startDate && rowDate <= endDate) { rowsToExport.push(row); }
+                        
+                        // Kiểm tra điều kiện ngày và điều kiện tên nhân viên
+                        let matchDate = (rowDate >= startDate && rowDate <= endDate);
+                        let matchStaff = (staffFilter === "ALL" || staffName.toUpperCase() === staffFilter.toUpperCase());
+
+                        if(matchDate && matchStaff) {
+                            filteredCloudData.push({
+                                date: `${nam}-${('0'+thang).slice(-2)}-${('0'+ngay).slice(-2)}`,
+                                thu: thuValue, ngay: ngay, thang: thang, nam: nam,
+                                staff: staffName, name: r[5], khTuyen: parseInt(r[6])||0,
+                                target: parseInt(r[7])||0, khMoi: parseInt(r[8])||0, khDon: parseInt(r[9])||0,
+                                totalSP: parseInt(r[10])||0,
+                                p1: parseInt(r[11])||0, p2: parseInt(r[12])||0, p3: parseInt(r[13])||0, p4: parseInt(r[14])||0,
+                                p5: parseInt(r[15])||0, p6: parseInt(r[16])||0, p7: parseInt(r[17])||0, p8: parseInt(r[18])||0,
+                                p9: parseInt(r[19])||0, p10: parseInt(r[20])||0, p11: parseInt(r[21])||0, p12: parseInt(r[22])||0,
+                                focM150: parseInt(r[23])||0, focMien: parseInt(r[24])||0,
+                                status: thuValue === "YÊU CẦU XÓA" ? "pending_delete" : "active"
+                            });
+                        }
                     }
                 }
 
-                if(rowsToExport.length <= 1) { alert("Không tìm thấy dữ liệu!"); btn.innerText = originalText; btn.disabled = false; return; }
+                // Gán dữ liệu lọc được vào mảng chính và cập nhật giao diện
+                marketData = filteredCloudData;
+                updateDashboard();
 
-                let csvContent = "\uFEFF";
-                rowsToExport.forEach(r => { csvContent += r.map(v => `"${(v+'').replace(/"/g, '""')}"`).join(",") + "\n"; });
-
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement("a");
-                link.href = URL.createObjectURL(blob);
-                link.download = `Bao_Cao_Mien_Cloud_${startStr}_to_${endStr}.csv`;
-                document.body.appendChild(link); link.click(); document.body.removeChild(link);
-                btn.innerText = originalText; btn.disabled = false;
+                alert(`Đã tìm thấy và hiển thị ${filteredCloudData.length} dòng dữ liệu từ Google Sheets.`);
+                btn.innerText = "🔍 Lọc"; btn.disabled = false;
             })
             .catch(err => {
-                alert("Lỗi tải! Kiểm tra lại bản deploy Apps Script mới nhất.");
-                btn.innerText = originalText; btn.disabled = false;
+                alert("Lỗi kết nối mây!");
+                btn.innerText = "🔍 Lọc"; btn.disabled = false;
             });
         }
 
-        function exportLocalToExcel() {
-            if(marketData.length === 0) { alert("Chưa có dữ liệu!"); return; }
+        // --- CẬP NHẬT: HÀM TẢI FILE EXCEL TRỰC TIẾP TỪ BẢNG ĐANG HIỂN THỊ ---
+        function downloadFilteredExcel() {
+            if(marketData.length === 0) { 
+                alert("Bảng đang trống! Vui lòng chọn ngày và bấm '🔍 Lọc' dữ liệu từ mây xuống trước khi bấm Tải về."); 
+                return; 
+            }
+            
+            const startStr = document.getElementById('export-start').value || "Bao_Cao";
+            const endStr = document.getElementById('export-end').value || "Tong_Hop";
+
             let csvContent = "\uFEFF"; 
             let headers = [
-                "Ngày", "Nhân Viên", "Danh Sách Chợ Kèm Số Liệu", "Tổng Đang PV", "Tổng Mục Tiêu", "Tổng Mở Mới", "Tổng Lên Đơn", "Tổng SP Bán",
+                "Thứ", "Ngày", "Tháng", "Năm", "Nhân Viên", "Danh Sách Chợ Kèm Số Liệu (PV/Mới/Đơn)", "Tổng Đang PV", "Tổng Mục Tiêu", "Tổng Mở Mới", "Tổng Lên Đơn", "Tổng SP Bán",
                 "MT 200g", "MT 450g", "MT 1kg", "MT 3kg", "MK ĐX 80g", "MK ĐX 200g", "MK ĐX 500g", "MK ĐX 1kg", "M.Dong 40g", "M.Dong 200g", "M.Dong 480g", "MT S.Lân 500g", "FOC M150", "FOC Miến Gói"
             ];
             csvContent += headers.map(h => `"${h}"`).join(",") + "\n";
+
             marketData.forEach(item => {
-                let row = [item.date, item.staff, item.name, item.khTuyen, item.target, item.khMoi, item.khDon, item.totalSP, item.p1, item.p2, item.p3, item.p4, item.p5, item.p6, item.p7, item.p8, item.p9, item.p10, item.p11, item.p12, item.focM150, item.focMien];
-                csvContent += row.map(v => `"${v}"`).join(",") + "\n";
+                let row = [
+                    item.thu, item.ngay, item.thang, item.nam, item.staff, item.name, item.khTuyen, item.target, item.khMoi, item.khDon, item.totalSP,
+                    item.p1, item.p2, item.p3, item.p4, item.p5, item.p6, item.p7, item.p8, item.p9, item.p10, item.p11, item.p12, item.focM150, item.focMien
+                ];
+                csvContent += row.map(v => `"${(v+'').replace(/"/g, '""')}"`).join(",") + "\n";
             });
+
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob); link.download = `Bao_Cao_Local.csv`;
+            link.href = URL.createObjectURL(blob);
+            link.download = `Bao_Cao_Gop_Cloud_${startStr}_to_${endStr}.csv`;
             document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
+
+        // Giữ lại hàm xuất sơ phòng dữ liệu nhập tay nhanh nếu cần
+        function exportLocalToExcel() { downloadFilteredExcel(); }
 
         updateDashboard();
     </script>
