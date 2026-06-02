@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Quản Lý KPI Tuyến Chợ</title>
+    <title>Tuyến Chợ Truyền thống-Khu vực HCM</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f0f2f5; color: #333; overflow: hidden; }
@@ -138,7 +138,7 @@
                     <button type="button" class="toggle-sidebar-btn" onclick="toggleSidebarPanel()" id="toggle-sidebar-btn">☰</button>
                     <span class="toggle-text-hint" id="toggle-text-hint">Khu vực nhập liệu</span>
                 </div>
-                <h1>Dashboard Quản Lý KPI Tuyến Chợ</h1>
+                <h1>Tuyến Chợ Truyền thống-Khu vực HCM</h1>
             </div>
             
             <div class="kpi-container" id="kpi-board"></div>
@@ -728,7 +728,7 @@
             if(marketData.length > 0) {
                 tableHTML += `
                     <tr style="background-color: #f8fafc; font-weight: bold; border-top: 2px solid #94a3b8;">
-                        <td colspan="3" style="text-align:right; color:#1e293b;">TỔNG CỘNG ĐÃ LỌC:</td>
+                        <td colspan="3" style="text-align:right; color:#1e293b;">TỔNG CỘNG:</td>
                         <td style="text-align:center;">${totalPV}</td>
                         <td class="highlight-target">${totalMT}</td>
                         <td class="highlight-actual">${totalMoi}</td>
@@ -802,7 +802,7 @@
             if(marketDetails.length === 0) { alert("Vui lòng thêm ít nhất 1 chợ!"); return; }
 
             const btn = document.getElementById('add-btn');
-            btn.innerText = 'Đang gửi dữ liệu lên mây...'; btn.disabled = true;
+            btn.innerText = 'Đang gửi dữ liệu lên đám mây...'; btn.disabled = true;
 
             const getNum = (id) => parseInt(document.getElementById(id).value) || 0;
             const dateInput = document.getElementById('work-date').value;
