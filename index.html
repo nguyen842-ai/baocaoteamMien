@@ -10,8 +10,8 @@
         .dashboard-container { display: flex; height: 100vh; position: relative; }
         
         /* Sidebar Form */
-        .sidebar { width: 400px; background-color: #ffffff; padding: 20px; box-shadow: 3px 0 10px rgba(0,0,0,0.05); z-index: 10; overflow-y: auto; transition: all 0.3s ease; flex-shrink: 0; }
-        .sidebar.hidden { margin-left: -400px; opacity: 0; pointer-events: none; }
+        .sidebar { width: 400px; background-color: #ffffff; padding: 20px; box-shadow: 3px 0 10px rgba(0,0,0,0.05); z-index: 10; overflow-y: auto; transition: margin-left 0.3s ease, opacity 0.3s ease; flex-shrink: 0; position: relative; }
+        .sidebar.hidden { margin-left: -400px; opacity: 0; }
         .sidebar h2 { color: #1e3a8a; font-size: 1.3rem; margin-bottom: 20px; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; position: sticky; top: 0; background: white; z-index: 11; }
         .section-title { font-size: 0.95rem; color: #2563eb; margin: 15px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 5px; }
         .form-group { margin-bottom: 12px; }
@@ -31,14 +31,15 @@
         .market-entry input:focus { border-color: #3b82f6; }
         .market-entry .btn-remove { position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; padding: 0; border-radius: 50%; background-color: #ef4444; color: white; line-height: 20px; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
+        /* CẬP NHẬT STYLE: Thiết kế nút mũi tên trắng dính liền vào mép của thanh nhập liệu */
+        .toggle-sidebar-container { position: absolute; top: 20px; right: -24px; z-index: 100; }
+        .toggle-sidebar-btn { background-color: #ffffff; color: #1e3a8a; border: 1px solid #cbd5e1; border-left: none; border-radius: 0 6px 6px 0; width: 24px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; font-weight: bold; box-shadow: 3px 2px 6px rgba(0,0,0,0.08); transition: background-color 0.2s, color 0.2s; padding: 0; }
+        .toggle-sidebar-btn:hover { background-color: #f8fafc; color: #2563eb; }
+
         /* Main Content */
-        .main-content { flex: 1; padding: 25px; overflow-y: auto; transition: all 0.3s ease; position: relative; }
-        .main-header-box { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .main-content { flex: 1; padding: 25px; overflow-y: auto; transition: all 0.3s ease; }
+        .main-header-box { display: flex; align-items: center; margin-bottom: 20px; }
         .main-content h1 { font-size: 1.8rem; color: #1e293b; }
-        
-        /* THÊM STYLE: Nút mũi tên ẩn hiện Sidebar */
-        .toggle-sidebar-btn { background-color: #1e3a8a; color: white; border: none; border-radius: 6px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: background-color 0.2s; flex-shrink: 0; }
-        .toggle-sidebar-btn:hover { background-color: #2563eb; }
 
         /* KPI Cards */
         .kpi-container { display: flex; gap: 20px; margin-bottom: 25px; }
@@ -82,6 +83,10 @@
 
     <div class="dashboard-container">
         <div class="sidebar" id="sidebar-panel">
+            <div class="toggle-sidebar-container">
+                <button type="button" class="toggle-sidebar-btn" onclick="toggleSidebarPanel()" id="toggle-sidebar-btn" title="Ẩn/Hiện form báo cáo">◀</button>
+            </div>
+
             <h2>Báo Cáo Tổng Tuyến</h2>
             <form id="market-form">
                 
@@ -132,7 +137,6 @@
 
         <div class="main-content">
             <div class="main-header-box">
-                <button type="button" class="toggle-sidebar-btn" onclick="toggleSidebarPanel()" id="toggle-sidebar-btn" title="Ẩn/Hiện form báo cáo">◀</button>
                 <h1>Dashboard Quản Lý KPI Tuyến Chợ</h1>
             </div>
             
@@ -324,7 +328,7 @@
 {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Bà Lát", EstC: "5", Target: "4"},
 {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Lê Minh Xuân", EstC: "5", Target: "4"},
 ];
-        const ALL_STAFFS = ["Lương Thành Phát","Lâm Thị Cẩm Linh","Nguyễn Thị Sao Mai Anh"];
+        const ALL_STAFFS = ["Lương Thành Phát","Nguyễn Thị Sao Mai Anh","Lâm Thị Cẩm Linh"];
         const ALL_MARKETS = ["Chợ Tôn Thất Đạm",
 "Chợ Bến Thành",
 "Chợ Cầu Kho",
@@ -576,6 +580,7 @@
 "Chợ Linh Xuân",
 "Chợ Xuân Hiệp",
 "Chợ Tam Hà",
+"Chợ nhỏ Hoàng Diệu"
 ];
 
         // --- BƯỚC 2: LINK GOOGLE APP SCRIPT (Bạn dán lại link /exec vào đây nhé) ---
@@ -594,7 +599,7 @@
             return plan ? parseInt(plan.Target || 0) : 0; 
         }
 
-        // THÊM HÀM: Xử lý ẩn/hiện thanh Sidebar bên trái
+        // CẬP NHẬT HÀM: Logic điều khiển trượt thanh Sidebar dính liền nút
         function toggleSidebarPanel() {
             const sidebar = document.getElementById('sidebar-panel');
             const btn = document.getElementById('toggle-sidebar-btn');
@@ -661,7 +666,6 @@
 
         let marketData = JSON.parse(localStorage.getItem('marketDashboardData')) || [];
 
-        // --- HÀM CẬP NHẬT GIAO DIỆN CHÍNH (ĐỔ SỐ LIỆU XUỐNG BẢNG XEM TRƯỚC) ---
         function updateDashboard() {
             localStorage.setItem('marketDashboardData', JSON.stringify(marketData));
             let tableHTML = '';
@@ -737,7 +741,6 @@
 
             document.querySelector('#data-table tbody').innerHTML = tableHTML;
 
-            // Cập nhật Thẻ KPI phía trên
             let kpiHTML = '';
             let staffListForKPI = ALL_STAFFS.length > 0 ? ALL_STAFFS : [...new Set(marketData.map(d => d.staff))];
             
