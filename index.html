@@ -24,7 +24,6 @@
         .secondary-btn { background-color: #dc2626; margin-top: 15px; }
         .secondary-btn:hover { background-color: #b91c1c; }
         
-        /* CẬP NHẬT: ÉP NHỎ Ô NHẬP LIST CHỢ CHỐNG CUỘN NGANG */
         .market-entry { padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; background-color: #f8fafc; margin-bottom: 10px; position: relative; }
         .market-entry input[type="text"] { width: 100%; padding: 6px 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 4px; outline:none; }
         .market-entry input[type="number"] { min-width: 0; width: 100%; padding: 6px 2px; font-size: 0.9rem; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; outline:none; }
@@ -49,18 +48,26 @@
         .table-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .table-header h3 { color: #475569; margin: 0; }
-        .export-btn { width: auto; margin: 0; background-color: #10b981; padding: 8px 15px; font-size: 0.9rem; }
-        .export-btn:hover { background-color: #059669; }
+        .export-btn { width: auto; margin: 0; background-color: #64748b; padding: 8px 15px; font-size: 0.9rem; }
+        .export-btn:hover { background-color: #475569; }
+        
+        /* Khung xuất mây */
+        .cloud-export-box { background: #e0f2fe; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #bfdbfe; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;}
+        .cloud-export-box label { font-size: 0.85rem; font-weight: bold; color:#1e3a8a;}
+        .cloud-export-box input[type="date"] { padding: 5px; border-radius: 4px; border: 1px solid #93c5fd; outline:none;}
 
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        /* CẬP NHẬT: Ép hẹp các cột số trong bảng */
         th, td { padding: 8px; text-align: left; border: 1px solid #e2e8f0; vertical-align: middle; }
         th { background-color: #f8fafc; color: #334155; font-weight: 600; position: sticky; top: 0; z-index: 2; text-align: center; }
         th.narrow-col, td.narrow-col { width: 65px; text-align: center; }
         tr:hover { background-color: #f1f5f9; }
-        .delete-btn { background-color: #ef4444; padding: 5px 10px; font-size: 0.75rem; margin: 0; width: auto; color:white; border-radius:4px; border:none; cursor:pointer;}
-        .delete-btn:hover { background-color: #dc2626; }
+        
+        /* ĐỔI STYLE NÚT YÊU CẦU XÓA THÀNH MÀU CAM KHÁC BIỆT */
+        .delete-btn { background-color: #f97316; padding: 6px 10px; font-size: 0.75rem; margin: 0; width: auto; color:white; border-radius:4px; border:none; cursor:pointer; font-weight: bold;}
+        .delete-btn:hover { background-color: #ea580c; }
+        .row-blur { opacity: 0.5; background-color: #fee2e2 !important; } /* Giao diện khi chờ xóa */
+
         .highlight-target { background-color: #fffbeb; font-weight: bold; color: #d97706; text-align: center;}
         .highlight-actual { background-color: #ecfdf5; font-weight: bold; color: #059669; text-align: center;}
         .product-list { text-align: left; line-height: 1.6; }
@@ -124,9 +131,16 @@
             <div class="kpi-container" id="kpi-board"></div>
 
             <div class="table-box">
+                <div class="cloud-export-box">
+                    <strong style="color: #1e3a8a; font-size:1rem;">☁️ Xuất Dữ Liệu Tổng Từ Google Sheets:</strong>
+                    <label>Từ ngày: <input type="date" id="export-start"></label>
+                    <label>Đến ngày: <input type="date" id="export-end"></label>
+                    <button type="button" id="cloud-export-btn" onclick="exportFromCloud()" style="width: auto; margin: 0; background-color: #3b82f6; color: white; padding: 6px 15px;">⬇️ Lọc & Tải Về</button>
+                </div>
+
                 <div class="table-header">
-                    <h3>Bảng Báo Cáo Chi Tiết</h3>
-                    <button class="export-btn" onclick="exportToExcel()">📥 Xuất File Excel</button>
+                    <h3>Bảng Báo Cáo Tạm Thời (Chỉ Lưu Trên Máy Này)</h3>
+                    <button class="export-btn" onclick="exportLocalToExcel()">Xuất bảng dưới đây</button>
                 </div>
                 
                 <div class="table-responsive">
@@ -144,7 +158,7 @@
                                 <th style="min-width: 160px;">Sản Phẩm Đã Bán</th>
                                 <th class="narrow-col">M150</th>
                                 <th class="narrow-col">Miến Gói</th>
-                                <th>Hành động</th>
+                                <th style="text-align: center;">Hành động</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -155,9 +169,8 @@
     </div>
 
     <script>
-        // --- BƯỚC 1: DỮ LIỆU CỐ ĐỊNH ---
-        const ROUTE_PLAN = [
-           {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "1",  Market: "Chợ Thiếc", EstC: "7", Target: "3"},
+        // --- BƯỚC 1: DỮ LIỆU CỐ ĐỊNH (Bỏ qua DB theo yêu cầu, bạn tự dán lại mảng cũ vào đây nhé) ---
+        const ROUTE_PLAN = [{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "1",  Market: "Chợ Thiếc", EstC: "7", Target: "3"},
 {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "6",  Market: "Chợ Phú Thọ", EstC: "8", Target: "6"},
 {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "2",  Market: "Chợ Phú Trung", EstC: "8", Target: "4"},
 {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "17",  Market: "Chợ Bình Thới", EstC: "18", Target: "17"},
@@ -300,12 +313,9 @@
 {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Bà Hom", EstC: "5", Target: "4"},
 {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Bà Lát", EstC: "5", Target: "4"},
 {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Lê Minh Xuân", EstC: "5", Target: "4"},
-        ];
-
-        const ALL_STAFFS = ["Lâm Thị Cẩm Linh", "Lương Thành Phát", "Nguyễn Thị Sao Mai Anh"];
-        
-        const ALL_MARKETS = [
-           "Chợ Tôn Thất Đạm",
+];
+        const ALL_STAFFS = ["Lương Thành Phát","Nguyễn Thị Sao Mai Anh","Lâm Thị Cẩm Linh"];
+        const ALL_MARKETS = ["Chợ Tôn Thất Đạm",
 "Chợ Bến Thành",
 "Chợ Cầu Kho",
 "Chợ Nguyễn Cảnh Chân",
@@ -555,11 +565,11 @@
 "Chợ Linh Trung",
 "Chợ Linh Xuân",
 "Chợ Xuân Hiệp",
-"Chợ Tam Hà"
-        ];
+"Chợ Tam Hà",
+];
 
         // --- BƯỚC 2: LINK GOOGLE APP SCRIPT ---
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwE_eLniZV0Rh-Z5pzRPOof02FH7nvlSclQzULWMkbJ5Bbkpe6Tjg45_TCgSQkzDGDH/exec'; 
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJ3-Ek_YkjBUQtQ6wLW8uhb6u2oZ14wu2AsWoLNvGx9Ua9EljKefYsOBl3ee81KOAo/exec'; 
 
         // ==============================================================
         
@@ -573,7 +583,6 @@
             return plan ? parseInt(plan.Target || 0) : 0; 
         }
 
-        // --- LOGIC TẠO DANH SÁCH CHỢ ĐỘNG THEO NGÀY ---
         function renderRouteMarkets() {
             const dateInput = document.getElementById('work-date').value;
             const staff = document.getElementById('staff-name').value;
@@ -586,16 +595,13 @@
             const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
             const strThu = days[dateObj.getDay()];
 
-            // Lọc ra các chợ nằm trong tuyến của nhân viên vào thứ đó
             const planned = ROUTE_PLAN.filter(p => p.NV.toUpperCase() === staff.toUpperCase() && p.date.toUpperCase() === strThu.toUpperCase());
-            
             planned.forEach(p => addMarketRow(p.Market, p.Target));
             if(planned.length === 0) {
                 container.innerHTML = '<p style="font-size:0.85rem; color:#94a3b8; font-style:italic;">Không có lịch đi tuyến cố định vào ngày này.</p>';
             }
         }
 
-        /* CẬP NHẬT: THU HẸP Ô SỐ TRONG GIAO DIỆN NHẬP */
         function addMarketRow(marketName = '', target = 0) {
             const container = document.getElementById('route-markets-list');
             if(container.querySelector('p')) container.innerHTML = ''; 
@@ -628,7 +634,6 @@
         document.getElementById('staff-name').addEventListener('change', renderRouteMarkets);
         document.getElementById('add-extra-market-btn').addEventListener('click', () => addMarketRow('', 0));
 
-
         let marketData = JSON.parse(localStorage.getItem('marketDashboardData')) || [];
 
         // --- HÀM CẬP NHẬT GIAO DIỆN CHÍNH ---
@@ -647,11 +652,16 @@
 
                 const dateObj = new Date(item.date);
                 const dateStr = `${('0'+dateObj.getDate()).slice(-2)}/${('0'+(dateObj.getMonth()+1)).slice(-2)}`;
-
                 let formattedMarkets = item.name.replace(/ \| /g, "<br>• ");
 
+                // Kiểm tra xem dòng này có đang ở trạng thái bị yêu cầu xóa không
+                let isDeleted = item.status === "pending_delete";
+                let rowClass = isDeleted ? "row-blur" : "";
+                let btnText = isDeleted ? "⏳ Đang xử lý xóa..." : "⚠️ Yêu cầu xóa";
+                let btnDisabled = isDeleted ? "disabled style='background-color:#94a3b8; cursor:not-allowed;'" : "";
+
                 tableHTML += `
-                    <tr>
+                    <tr class="${rowClass}">
                         <td style="color:#64748b; text-align:center;">${dateStr}</td>
                         <td style="text-align:center;">${item.staff}</td>
                         <td style="font-size:0.8rem; font-weight:500;">• ${formattedMarkets}</td>
@@ -663,7 +673,9 @@
                         <td class="product-list">${soldStr}</td>
                         <td class="narrow-col">${item.focM150}</td>
                         <td class="narrow-col">${item.focMien}</td>
-                        <td style="text-align:center;"><button class="delete-btn" onclick="deleteMarket(${index})">Xóa</button></td>
+                        <td style="text-align:center;">
+                            <button class="delete-btn" ${btnDisabled} onclick="requestDeleteMarket(${index})">${btnText}</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -673,7 +685,7 @@
             // Cập nhật Thẻ KPI
             let kpiHTML = '';
             ALL_STAFFS.forEach(staff => {
-                let staffData = marketData.filter(d => d.staff === staff);
+                let staffData = marketData.filter(d => d.staff === staff && d.status !== "pending_delete"); // Không tính dòng chờ xóa vào KPI
                 let actualMoi = staffData.reduce((sum, d) => sum + d.khMoi, 0);
                 let totalSP = staffData.reduce((sum, d) => sum + d.totalSP, 0);
                 let targetMoi = staffData.reduce((sum, d) => sum + d.target, 0);
@@ -712,28 +724,20 @@
                 const mDon = parseInt(entry.querySelector('.m-don').value) || 0;
 
                 if(mName.trim() !== '') {
-                    sumTarget += mTarget;
-                    sumPV += mPV;
-                    sumMoi += mMoi;
-                    sumDon += mDon;
+                    sumTarget += mTarget; sumPV += mPV; sumMoi += mMoi; sumDon += mDon;
                     marketDetails.push(`${mName} (${mPV}/${mMoi}/${mDon})`);
                 }
             });
 
-            if(marketDetails.length === 0) {
-                alert("Vui lòng thêm ít nhất 1 chợ vào báo cáo!");
-                return;
-            }
+            if(marketDetails.length === 0) { alert("Vui lòng thêm ít nhất 1 chợ!"); return; }
 
             const btn = document.getElementById('add-btn');
-            btn.innerText = 'Đang gửi dữ liệu lên mây...';
-            btn.disabled = true;
+            btn.innerText = 'Đang gửi dữ liệu lên mây...'; btn.disabled = true;
 
             const getNum = (id) => parseInt(document.getElementById(id).value) || 0;
             const dateInput = document.getElementById('work-date').value;
             const dateObj = new Date(dateInput);
             const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-            const strThu = days[dateObj.getDay()];
             const staff = document.getElementById('staff-name').value;
             
             const p1=getNum('p1'), p2=getNum('p2'), p3=getNum('p3'), p4=getNum('p4');
@@ -742,15 +746,11 @@
             const totalSP = p1+p2+p3+p4+p5+p6+p7+p8+p9+p10+p11+p12;
 
             const newMarket = {
-                date: dateInput,
-                thu: strThu, ngay: dateObj.getDate(), thang: dateObj.getMonth() + 1, nam: dateObj.getFullYear(),
-                staff: staff, 
-                name: marketDetails.join(' | '), 
-                target: sumTarget, 
-                totalSP: totalSP,
+                date: dateInput, status: "active",
+                thu: days[dateObj.getDay()], ngay: dateObj.getDate(), thang: dateObj.getMonth() + 1, nam: dateObj.getFullYear(),
+                staff: staff, name: marketDetails.join(' | '), target: sumTarget, totalSP: totalSP,
                 khTuyen: sumPV, khMoi: sumMoi, khDon: sumDon,
-                p1: p1, p2: p2, p3: p3, p4: p4, p5: p5, p6: p6, p7: p7, p8: p8,
-                p9: p9, p10: p10, p11: p11, p12: p12,
+                p1: p1, p2: p2, p3: p3, p4: p4, p5: p5, p6: p6, p7: p7, p8: p8, p9: p9, p10: p10, p11: p11, p12: p12,
                 focM150: getNum('foc-m150'), focMien: getNum('foc-mien-kho')
             };
 
@@ -759,16 +759,11 @@
 
             if(GOOGLE_SCRIPT_URL.includes('/exec')) {
                 fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newMarket)
                 })
                 .then(() => resetFormAndBtn(btn, dateInput, staff))
-                .catch(error => {
-                    resetFormAndBtn(btn, dateInput, staff);
-                    alert("Đã lưu nội bộ nhưng lỗi kết nối Google Sheets!");
-                });
+                .catch(error => { resetFormAndBtn(btn, dateInput, staff); alert("Lỗi mạng kết nối Sheets!"); });
             } else {
                 resetFormAndBtn(btn, dateInput, staff);
             }
@@ -778,52 +773,102 @@
             document.querySelectorAll('#market-form input[type="number"]').forEach(inp => inp.value = 0);
             document.getElementById('work-date').value = dateInput;
             document.getElementById('staff-name').value = staff;
-            btn.innerText = 'Gửi Báo Cáo Tuyến';
-            btn.disabled = false;
+            btn.innerText = 'Gửi Báo Cáo Tuyến'; btn.disabled = false;
             document.getElementById('route-markets-list').innerHTML = '';
             renderRouteMarkets();
         }
 
-        function deleteMarket(index) {
-            if(confirm("Bạn có chắc chắn muốn xóa khỏi hiển thị?")) { 
-                marketData.splice(index, 1); 
-                updateDashboard(); 
+        // --- CẬP NHẬT: LOGIC GỬI YÊU CẦU XÓA LÊN MÂY ĐỂ ĐỔI MÀU SHEET ---
+        function requestDeleteMarket(index) {
+            if(confirm("Bạn có chắc chắn muốn gửi Yêu cầu xóa dòng này lên hệ thống không? Dòng lỗi sẽ được đánh dấu đỏ trên Google Sheets.")) {
+                let targetItem = marketData[index];
+                targetItem.status = "pending_delete"; // Đổi trạng thái nội bộ
+                updateDashboard();
+
+                if(GOOGLE_SCRIPT_URL.includes('/exec')) {
+                    // Gửi tín hiệu báo xóa lên Apps Script
+                    fetch(GOOGLE_SCRIPT_URL, {
+                        method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            actionType: "request_delete",
+                            staff: targetItem.staff,
+                            name: targetItem.name
+                        })
+                    }).then(() => {
+                        alert("Đã gửi yêu cầu thành công! Vui lòng báo quản lý duyệt xóa.");
+                    });
+                }
             }
         }
 
         document.getElementById('clear-btn').addEventListener('click', function() {
-            if(confirm("Xóa toàn bộ dữ liệu đang hiển thị tạm trên máy này?")) { 
-                marketData = []; 
-                updateDashboard(); 
-            }
+            if(confirm("Xóa toàn bộ dữ liệu đang hiển thị tạm trên máy này?")) { marketData = []; updateDashboard(); }
         });
 
-        function exportToExcel() {
-            if(marketData.length === 0) { alert("Chưa có dữ liệu để xuất!"); return; }
+        // --- HÀM XUẤT EXCEL TỪ GOOGLE SHEETS ---
+        function exportFromCloud() {
+            const startStr = document.getElementById('export-start').value;
+            const endStr = document.getElementById('export-end').value;
+            if(!startStr || !endStr) { alert("Vui lòng chọn đầy đủ ngày!"); return; }
+
+            const btn = document.getElementById('cloud-export-btn');
+            const originalText = btn.innerText;
+            btn.innerText = "⏳ Đang kết nối..."; btn.disabled = true;
+
+            const startDate = new Date(startStr); startDate.setHours(0,0,0,0);
+            const endDate = new Date(endStr); endDate.setHours(23,59,59,999);
+
+            fetch(GOOGLE_SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                if(!data || data.length === 0) { alert("Sheets trống!"); btn.innerText = originalText; btn.disabled = false; return; }
+
+                let headers = data[0];
+                let rowsToExport = [headers];
+
+                for(let i = 1; i < data.length; i++) {
+                    let row = data[i];
+                    let ngay = row[1], thang = row[2], nam = row[3];
+                    if(ngay && thang && nam) {
+                        let rowDate = new Date(nam, thang - 1, ngay);
+                        if(rowDate >= startDate && rowDate <= endDate) { rowsToExport.push(row); }
+                    }
+                }
+
+                if(rowsToExport.length <= 1) { alert("Không tìm thấy dữ liệu!"); btn.innerText = originalText; btn.disabled = false; return; }
+
+                let csvContent = "\uFEFF";
+                rowsToExport.forEach(r => { csvContent += r.map(v => `"${(v+'').replace(/"/g, '""')}"`).join(",") + "\n"; });
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = `Bao_Cao_Mien_Cloud_${startStr}_to_${endStr}.csv`;
+                document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                btn.innerText = originalText; btn.disabled = false;
+            })
+            .catch(err => {
+                alert("Lỗi tải! Kiểm tra lại bản deploy Apps Script mới nhất.");
+                btn.innerText = originalText; btn.disabled = false;
+            });
+        }
+
+        function exportLocalToExcel() {
+            if(marketData.length === 0) { alert("Chưa có dữ liệu!"); return; }
             let csvContent = "\uFEFF"; 
             let headers = [
-                "Ngày", "Nhân Viên", "Danh Sách Chợ Kèm Số Liệu (PV/Mới/Đơn)", "Tổng Đang PV", "Tổng Mục Tiêu", "Tổng Mở Mới", "Tổng Lên Đơn", "Tổng SP Bán",
-                "MT 200g", "MT 450g", "MT 1kg", "MT 3kg", "MK ĐX 80g", "MK ĐX 200g", "MK ĐX 500g", "MK ĐX 1kg", 
-                "M.Dong 40g", "M.Dong 200g", "M.Dong 480g", "MT S.Lân 500g", "FOC M150", "FOC Miến Gói"
+                "Ngày", "Nhân Viên", "Danh Sách Chợ Kèm Số Liệu", "Tổng Đang PV", "Tổng Mục Tiêu", "Tổng Mở Mới", "Tổng Lên Đơn", "Tổng SP Bán",
+                "MT 200g", "MT 450g", "MT 1kg", "MT 3kg", "MK ĐX 80g", "MK ĐX 200g", "MK ĐX 500g", "MK ĐX 1kg", "M.Dong 40g", "M.Dong 200g", "M.Dong 480g", "MT S.Lân 500g", "FOC M150", "FOC Miến Gói"
             ];
             csvContent += headers.map(h => `"${h}"`).join(",") + "\n";
-
             marketData.forEach(item => {
-                let row = [
-                    item.date, item.staff, item.name, item.khTuyen, item.target, item.khMoi, item.khDon, item.totalSP,
-                    item.p1, item.p2, item.p3, item.p4, item.p5, item.p6, item.p7, item.p8, 
-                    item.p9, item.p10, item.p11, item.p12, item.focM150, item.focMien
-                ];
+                let row = [item.date, item.staff, item.name, item.khTuyen, item.target, item.khMoi, item.khDon, item.totalSP, item.p1, item.p2, item.p3, item.p4, item.p5, item.p6, item.p7, item.p8, item.p9, item.p10, item.p11, item.p12, item.focM150, item.focMien];
                 csvContent += row.map(v => `"${v}"`).join(",") + "\n";
             });
-
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = `Bao_Cao_Tuyen_Gop_${new Date().toLocaleDateString('vi-VN').replace(/\//g,'-')}.csv`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            link.href = URL.createObjectURL(blob); link.download = `Bao_Cao_Local.csv`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
         updateDashboard();
