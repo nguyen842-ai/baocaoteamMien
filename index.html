@@ -10,7 +10,7 @@
         .dashboard-container { display: flex; height: 100vh; }
         
         /* Sidebar Form */
-        .sidebar { width: 380px; background-color: #ffffff; padding: 20px; box-shadow: 3px 0 10px rgba(0,0,0,0.05); z-index: 10; overflow-y: auto; }
+        .sidebar { width: 400px; background-color: #ffffff; padding: 20px; box-shadow: 3px 0 10px rgba(0,0,0,0.05); z-index: 10; overflow-y: auto; }
         .sidebar h2 { color: #1e3a8a; font-size: 1.3rem; margin-bottom: 20px; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; position: sticky; top: 0; background: white; z-index: 11; }
         .section-title { font-size: 0.95rem; color: #2563eb; margin: 15px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 5px; }
         .form-group { margin-bottom: 12px; }
@@ -23,6 +23,13 @@
         button:hover { background-color: #1d4ed8; }
         .secondary-btn { background-color: #dc2626; margin-top: 15px; }
         .secondary-btn:hover { background-color: #b91c1c; }
+        
+        /* CẬP NHẬT: ÉP NHỎ Ô NHẬP LIST CHỢ CHỐNG CUỘN NGANG */
+        .market-entry { padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; background-color: #f8fafc; margin-bottom: 10px; position: relative; }
+        .market-entry input[type="text"] { width: 100%; padding: 6px 8px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 4px; outline:none; }
+        .market-entry input[type="number"] { min-width: 0; width: 100%; padding: 6px 2px; font-size: 0.9rem; text-align: center; border: 1px solid #cbd5e1; border-radius: 4px; outline:none; }
+        .market-entry input:focus { border-color: #3b82f6; }
+        .market-entry .btn-remove { position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; padding: 0; border-radius: 50%; background-color: #ef4444; color: white; line-height: 20px; text-align: center; cursor: pointer; font-size: 12px; font-weight: bold; margin: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         
         /* Main Content */
         .main-content { flex: 1; padding: 25px; overflow-y: auto; }
@@ -47,13 +54,15 @@
 
         .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th, td { padding: 10px; text-align: center; border: 1px solid #e2e8f0; vertical-align: middle; }
-        th { background-color: #f8fafc; color: #334155; font-weight: 600; position: sticky; top: 0; z-index: 2; }
+        /* CẬP NHẬT: Ép hẹp các cột số trong bảng */
+        th, td { padding: 8px; text-align: left; border: 1px solid #e2e8f0; vertical-align: middle; }
+        th { background-color: #f8fafc; color: #334155; font-weight: 600; position: sticky; top: 0; z-index: 2; text-align: center; }
+        th.narrow-col, td.narrow-col { width: 65px; text-align: center; }
         tr:hover { background-color: #f1f5f9; }
-        .delete-btn { background-color: #ef4444; padding: 5px 10px; font-size: 0.75rem; margin: 0; width: auto; }
+        .delete-btn { background-color: #ef4444; padding: 5px 10px; font-size: 0.75rem; margin: 0; width: auto; color:white; border-radius:4px; border:none; cursor:pointer;}
         .delete-btn:hover { background-color: #dc2626; }
-        .highlight-target { background-color: #fffbeb; font-weight: bold; color: #d97706; }
-        .highlight-actual { background-color: #ecfdf5; font-weight: bold; color: #059669; }
+        .highlight-target { background-color: #fffbeb; font-weight: bold; color: #d97706; text-align: center;}
+        .highlight-actual { background-color: #ecfdf5; font-weight: bold; color: #059669; text-align: center;}
         .product-list { text-align: left; line-height: 1.6; }
         .no-product { color: #94a3b8; font-style: italic; }
     </style>
@@ -61,38 +70,29 @@
 <body>
 
     <div class="dashboard-container">
-        <!-- BÊN TRÁI: FORM NHẬP -->
         <div class="sidebar">
-            <h2>Báo Cáo Số Liệu Chợ</h2>
+            <h2>Báo Cáo Tổng Tuyến</h2>
             <form id="market-form">
                 
-                <h3 class="section-title">Thông tin chung</h3>
+                <h3 class="section-title">1. Thông tin chung</h3>
                 <div class="form-group-row">
                     <div class="form-group" style="flex: 1;">
                         <label>Ngày làm việc:</label>
                         <input type="date" id="work-date" required>
                     </div>
                 </div>
-                
                 <div class="form-group">
                     <label>Nhân Viên:</label>
                     <select id="staff-name" required></select>
                 </div>
-
-                <div class="form-group">
-                    <label>Tên Chợ:</label>
-                    <input type="text" id="market-name" list="market-suggestions" required placeholder="Gõ để tìm chợ...">
-                    <datalist id="market-suggestions"></datalist>
-                </div>
                 
-                <h3 class="section-title">Khách Hàng trên Tuyến</h3>
-                <div class="form-group-row">
-                    <div class="form-group"><label>KH Đang PV:</label><input type="number" id="kh-tuyen" min="0" required value="0"></div>
-                    <div class="form-group"><label>KH Mở Mới:</label><input type="number" id="kh-moi" min="0" required value="0"></div>
-                    <div class="form-group"><label>KH Lên Đơn:</label><input type="number" id="kh-don" min="0" required value="0"></div>
-                </div>
+                <h3 class="section-title">2. Danh sách Chợ đã đi</h3>
+                <div id="route-markets-list"></div>
+                <datalist id="market-suggestions"></datalist>
 
-                <h3 class="section-title">Sản Phẩm Bán (Thùng)</h3>
+                <button type="button" id="add-extra-market-btn" style="background-color: #64748b; margin-top: 0; margin-bottom: 15px; padding: 8px;">+ Thêm chợ ngoài tuyến</button>
+
+                <h3 class="section-title">3. Tổng Sản Phẩm Bán (Thùng)</h3>
                 <div class="products-grid">
                     <div class="form-group"><label>Tươi 200gr:</label><input type="number" id="p1" min="0" value="0"></div>
                     <div class="form-group"><label>Tươi 450gr:</label><input type="number" id="p2" min="0" value="0"></div>
@@ -108,24 +108,20 @@
                     <div class="form-group"><label>Tươi Song Lân 500gr:</label><input type="number" id="p12" min="0" value="0"></div>
                 </div>
 
-                <h3 class="section-title">Quà tặng / Khuyến mãi (FOC)</h3>
+                <h3 class="section-title">4. Tổng Quà tặng / Khuyến mãi</h3>
                 <div class="form-group-row">
                     <div class="form-group"><label>FOC M150 (Lon):</label><input type="number" id="foc-m150" min="0" required value="0"></div>
-                    <div class="form-group"><label>FOC Miến khô (Gói):</label><input type="number" id="foc-mien-kho" min="0" required value="0"></div>
+                    <div class="form-group"><label>FOC Miến (Gói):</label><input type="number" id="foc-mien-kho" min="0" required value="0"></div>
                 </div>
 
-                <button type="submit" id="add-btn">Thêm Số Liệu Chợ</button>
+                <button type="submit" id="add-btn">Gửi Báo Cáo Tuyến</button>
             </form>
-            <button id="clear-btn" class="secondary-btn">Xóa Toàn Bộ Dữ Liệu Bộ Nhớ Tạm</button>
+            <button id="clear-btn" class="secondary-btn">Xóa Dữ Liệu Bộ Nhớ Tạm</button>
         </div>
 
-        <!-- BÊN PHẢI: BÁO CÁO & KPI -->
         <div class="main-content">
             <h1>Dashboard Quản Lý KPI Tuyến Chợ</h1>
-            
-            <div class="kpi-container" id="kpi-board">
-                <!-- Data đổ từ JS -->
-            </div>
+            <div class="kpi-container" id="kpi-board"></div>
 
             <div class="table-box">
                 <div class="table-header">
@@ -139,442 +135,228 @@
                             <tr>
                                 <th>Ngày</th>
                                 <th>Nhân Viên</th>
-                                <th>Tên Chợ</th>
-                                <th>Đang PV</th>
-                                <th class="highlight-target">Mục Tiêu</th>
-                                <th class="highlight-actual">Thực Tế</th>
-                                <th>Lên Đơn</th>
-                                <th style="background-color:#dbeafe; color:#1e40af;">Tổng SP</th>
-                                <th style="text-align: left; min-width: 200px;">Chi Tiết SP Đã Bán</th>
-                                <th>M150 (Lon)</th>
-                                <th>Miến (Gói)</th>
+                                <th style="min-width: 250px;">Chi Tiết Tuyến Chợ (PV/Mới/Đơn)</th>
+                                <th class="narrow-col">Tổng PV</th>
+                                <th class="narrow-col highlight-target">Tổng MT</th>
+                                <th class="narrow-col highlight-actual">Tổng Mới</th>
+                                <th class="narrow-col">Tổng Đơn</th>
+                                <th style="background-color:#dbeafe; color:#1e40af; text-align: center; width: 75px;">Tổng SP</th>
+                                <th style="min-width: 160px;">Sản Phẩm Đã Bán</th>
+                                <th class="narrow-col">M150</th>
+                                <th class="narrow-col">Miến Gói</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- Data đổ từ JS -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- LOGIC XỬ LÝ JS -->
     <script>
-        // --- BƯỚC 1: BẠN DÁN CÁC MẢNG DỮ LIỆU CỦA BẠN VÀO ĐÂY ---
+        // --- BƯỚC 1: DỮ LIỆU CỐ ĐỊNH ---
         const ROUTE_PLAN = [
             {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "1",  Market: "Chợ Thiếc", EstC: "7", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "6",  Market: "Chợ Phú Thọ", EstC: "8", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "2",  Market: "Chợ Phú Trung", EstC: "8", Target: "4"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "17",  Market: "Chợ Bình Thới", EstC: "18", Target: "17"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "",  Market: "Chợ Lãnh Binh Thăng", EstC: "12", Target: "5"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Ba", CinR: "9",  Market: "Chợ Bình Tiên", EstC: "12", Target: "10"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Ba", CinR: "4",  Market: "Chợ Phú Định", EstC: "8", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Ba", CinR: "7",  Market: "Chợ Phú Lâm", EstC: "18", Target: "13"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Ba", CinR: "",  Market: "Chợ Minh Phụng", EstC: "4", Target: "2"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "1",  Market: "Chợ tạm Huỳnh Văn Chính", EstC: "5", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "6",  Market: "Chợ Tân Phú 1", EstC: "6", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ tạm Thống Nhất", EstC: "5", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Hoàng Ngọc Phách", EstC: "8", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Tân Hương", EstC: "5", Target: "5"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ Sơn Kỳ", EstC: "11", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Bình Long", EstC: "9", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ Bình Trị Đông", EstC: "20", Target: "10"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Năm", CinR: "23",  Market: "Chợ Bình Tây", EstC: "45", Target: "30"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Năm", CinR: "",  Market: "Chợ Trần Bình", EstC: "20", Target: "5"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "2",  Market: "Chợ Hà Tôn Quyền", EstC: "8", Target: "5"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "4",  Market: "Chợ Xóm Vôi", EstC: "6", Target: "4"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "1",  Market: "chợ phùng hưng", EstC: "4", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "1",  Market: "Chợ Xã Tây", EstC: "5", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "13",  Market: "Chợ Hòa Bình", EstC: "25", Target: "18"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "1",  Market: "Chợ Cao Đạt", EstC: "5", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "",  Market: "Chợ An Đông", EstC: "5", Target: "2"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Trần Văn Quang", EstC: "6", Target: "4"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "",  Market: "Chợ Ông Hoàng", EstC: "13", Target: "5"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "5",  Market: "Chợ Tân Hưng", EstC: "5", Target: "10"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "14",  Market: "Chợ Phạm Văn Hai", EstC: "24", Target: "19"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "4",  Market: "Chợ Hòa Hưng", EstC: "10", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "",  Market: "CHỢ CHÍ HÒA", EstC: "6", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "1",  Market: "Chợ Phường 2", EstC: "4", Target: "2"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "6",  Market: "Chợ Nguyễn Tri phương", EstC: "19", Target: "11"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "",  Market: "Chợ Lê Hồng Phong", EstC: "8", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "1",  Market: "Chợ tạm Huỳnh Văn Chính", EstC: "5", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "6",  Market: "Chợ Tân Phú 1", EstC: "6", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ tạm Thống Nhất", EstC: "5", Target: "3"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Tân Hương", EstC: "5", Target: "4"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "3",  Market: "Chợ hiệp Tân", EstC: "9", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Bình Long", EstC: "9", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ Bình Trị Đông", EstC: "20", Target: "10"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Nghĩa Phát", EstC: "6", Target: "4"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "1",  Market: "Chợ Tân Bình", EstC: "30", Target: "11"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "3",  Market: "Chợ Bà Hoa", EstC: "11", Target: "6"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Bàu Cát", EstC: "4", Target: "2"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "6",  Market: "Chợ Hoàng Hoa Thám", EstC: "18", Target: "10"},
-{NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Võ Thành Trang", EstC: "8", Target: "5"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "3",  Market: "Chợ Căn Cứ", EstC: "15", Target: "11"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "6",  Market: "Chợ Gò vấp", EstC: "13", Target: "9"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "2",  Market: "Chợ Tân Sơn Nhất", EstC: "12", Target: "8"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "",  Market: "Chợ An Hội", EstC: "4", Target: "2"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "",  Market: "Chợ Bảo Ngọc Tú", EstC: "4", Target: "2"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "14",  Market: "Chợ Nguyễn Đình Chiểu", EstC: "24", Target: "19"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "11",  Market: "Chợ Phú Nhuận", EstC: "28", Target: "13"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "",  Market: "Chợ Cô Giang", EstC: "4", Target: "3"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Tư", CinR: "23",  Market: "Chợ Nguyễn Đình Chiểu", EstC: "24", Target: "24"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Tư", CinR: "",  Market: "Chợ Vạn Kiếp", EstC: "8", Target: "5"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "7",  Market: "Chợ Cây Quéo", EstC: "12", Target: "11"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "5",  Market: "Chợ Phan Văn Trị", EstC: "7", Target: "6"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "6",  Market: "Chợ Bà Chiểu", EstC: "40", Target: "21"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "",  Market: "Chợ Văn Thánh", EstC: "8", Target: "4"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "",  Market: "Chợ phường 25", EstC: "11", Target: "4"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "7",  Market: "Chợ Linh Trung", EstC: "6", Target: "7"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "10",  Market: "Chợ Thủ Đức B", EstC: "14", Target: "12"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "2",  Market: "Chợ Tam Hà", EstC: "8", Target: "6"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "4",  Market: "Chợ Tam Bình", EstC: "9", Target: "8"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "",  Market: "Chợ Thủ Đức", EstC: "12", Target: "7"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "",  Market: "Chợ Kiến Thiết", EstC: "5", Target: "3"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Bình Phước", EstC: "8", Target: "7"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "1",  Market: "Chợ Tạm Hiệp Bình Chánh", EstC: "5", Target: "4"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Tây Hòa", EstC: "2", Target: "2"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "5",  Market: "Chợ Hiệp Phú", EstC: "8", Target: "7"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Tăng Nhơn Phú A", EstC: "6", Target: "5"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "3",  Market: "Chợ Long Thạnh Mỹ", EstC: "4", Target: "3"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "",  Market: "Chợ Phước Long B", EstC: "4", Target: "3"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "",  Market: "Chợ Tăng Nhơn Phú B", EstC: "6", Target: "3"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "8",  Market: "Chợ An Nhơn", EstC: "8", Target: "8"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "2",  Market: "Chợ Tạm Phạm Văn Bạch", EstC: "7", Target: "6"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "1",  Market: "Chợ Thạch Đà", EstC: "10", Target: "9"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "",  Market: "Chợ Hạnh Thông Tây", EstC: "5", Target: "4"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "13",  Market: "Chợ Trần Hữu Trang", EstC: "15", Target: "14"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "11",  Market: "Chợ Phú Nhuận", EstC: "28", Target: "13"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "",  Market: "Chợ Ga", EstC: "5", Target: "3"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "8",  Market: "Chợ Thanh Đa", EstC: "10", Target: "9"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "15",  Market: "Chợ Thị Nghè", EstC: "22", Target: "19"},
-{NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "5",  Market: "Chợ Chiều võ duy ninh", EstC: "7", Target: "7"},
-{NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "14",  Market: "Chợ Tân Định", EstC: "28", Target: "20"},
-{NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "4",  Market: "Chợ Đakao", EstC: "8", Target: "6"},
-{NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "",  Market: "Chợ Bến thành", EstC: "8", Target: "5"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "2",  Market: "Chợ Tân Thuận", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "Chợ Cư Xá Ngân Hàng", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "2",  Market: "Chợ Tân Kiểng 1", EstC: "6", Target: "5"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "Chợ Tân Kiểng 2", EstC: "6", Target: "4"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "4",  Market: "Chợ Tân Quy", EstC: "6", Target: "5"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "tạp hóa", EstC: "0", Target: "1"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "5",  Market: "Chợ Tân Mỹ", EstC: "6", Target: "6"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "2",  Market: "Chợ Phú Thuận", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "Chợ Phước Long", EstC: "4", Target: "2"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "20",  Market: "Chợ Xóm Chiếu", EstC: "20", Target: "20"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ Hãng Dệt", EstC: "3", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ Nguyễn Khoái", EstC: "5", Target: "5"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "7",  Market: "Chợ Xóm Củi", EstC: "12", Target: "10"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "1",  Market: "Chợ Ba Đình", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "11",  Market: "Chợ Rạch Ông", EstC: "18", Target: "14"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "",  Market: "Chợ Hưng Phú", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "",  Market: "Chợ Bình An", EstC: "3", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "11",  Market: "Chợ Trung Chánh", EstC: "12", Target: "12"},
-{NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "",  Market: "Chợ Tân Chánh Hiệp", EstC: "10", Target: "8"},
-{NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "",  Market: "Chợ Cây Me", EstC: "7", Target: "5"},
-{NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "3",  Market: "Chợ Bà Điểm", EstC: "6", Target: "6"},
-{NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Vĩnh Lộc", EstC: "15", Target: "12"},
-{NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "1",  Market: "Chợ Vĩnh Lộc A", EstC: "8", Target: "8"},
-{NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Vĩnh Lộc B", EstC: "8", Target: "7"},
-{NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "8",  Market: "Chợ Thái Bình", EstC: "25", Target: "16"},
-{NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "1",  Market: "Chợ Cô Giang", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "1",  Market: "Chợ Cầu Kho", EstC: "5", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "6",  Market: "Chợ Yersin", EstC: "7", Target: "7"},
-{NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "1",  Market: "Chợ Tôn Thất Đạm", EstC: "12", Target: "6"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "Chợ Bùi Phát", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "10",  Market: "Chợ Nguyễn Văn Trỗi", EstC: "18", Target: "14"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "2",  Market: "Chợ Vườn Chuối", EstC: "6", Target: "4"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "6",  Market: "Chợ Bàn Cờ", EstC: "12", Target: "9"},
-{NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "",  Market: "Chợ Lê Văn Sỹ", EstC: "7", Target: "4"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "4",  Market: "Chợ 200", EstC: "5", Target: "5"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "3",  Market: "Chợ Cầu Cống", EstC: "5", Target: "5"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "2",  Market: "Chợ Hãng Phân", EstC: "5", Target: "5"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ đường Đoàn Văn Bơ", EstC: "13", Target: "8"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ Long Kiểng", EstC: "5", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ Tôn Thất Thuyết", EstC: "4", Target: "2"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "5",  Market: "Chợ Bến Bình Đông", EstC: "10", Target: "9"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "8",  Market: "Chợ Nhị Thiên Đường", EstC: "8", Target: "8"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "",  Market: "Chợ Nguyễn Chế Nghĩa", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "",  Market: "Chợ Trần Văn Thành", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "6",  Market: "Chợ Phạm Thế Hiển", EstC: "10", Target: "9"},
-{NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "13",  Market: "Chợ Hóc Môn", EstC: "14", Target: "14"},
-{NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "2",  Market: "Chợ Tạm Tân Hiệp", EstC: "3", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "",  Market: "Chợ Tân Thới Nhì", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "",  Market: "Chợ Bùi Môn", EstC: "4", Target: "3"},
-{NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Vĩnh Lộc", EstC: "15", Target: "10"},
-{NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Bà Hom", EstC: "5", Target: "4"},
-{NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Bà Lát", EstC: "5", Target: "4"},
-{NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Lê Minh Xuân", EstC: "5", Target: "4"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "6",  Market: "Chợ Phú Thọ", EstC: "8", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "2",  Market: "Chợ Phú Trung", EstC: "8", Target: "4"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "17",  Market: "Chợ Bình Thới", EstC: "18", Target: "17"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "",  Market: "Chợ Lãnh Binh Thăng", EstC: "12", Target: "5"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Ba", CinR: "9",  Market: "Chợ Bình Tiên", EstC: "12", Target: "10"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Ba", CinR: "4",  Market: "Chợ Phú Định", EstC: "8", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Ba", CinR: "7",  Market: "Chợ Phú Lâm", EstC: "18", Target: "13"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Ba", CinR: "",  Market: "Chợ Minh Phụng", EstC: "4", Target: "2"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "1",  Market: "Chợ tạm Huỳnh Văn Chính", EstC: "5", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "6",  Market: "Chợ Tân Phú 1", EstC: "6", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ tạm Thống Nhất", EstC: "5", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Hoàng Ngọc Phách", EstC: "8", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Tân Hương", EstC: "5", Target: "5"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ Sơn Kỳ", EstC: "11", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Bình Long", EstC: "9", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ Bình Trị Đông", EstC: "20", Target: "10"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Năm", CinR: "23",  Market: "Chợ Bình Tây", EstC: "45", Target: "30"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Năm", CinR: "",  Market: "Chợ Trần Bình", EstC: "20", Target: "5"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "2",  Market: "Chợ Hà Tôn Quyền", EstC: "8", Target: "5"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "4",  Market: "Chợ Xóm Vôi", EstC: "6", Target: "4"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "1",  Market: "chợ phùng hưng", EstC: "4", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "1",  Market: "Chợ Xã Tây", EstC: "5", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "13",  Market: "Chợ Hòa Bình", EstC: "25", Target: "18"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "1",  Market: "Chợ Cao Đạt", EstC: "5", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Sáu", CinR: "",  Market: "Chợ An Đông", EstC: "5", Target: "2"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Trần Văn Quang", EstC: "6", Target: "4"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "",  Market: "Chợ Ông Hoàng", EstC: "13", Target: "5"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "5",  Market: "Chợ Tân Hưng", EstC: "5", Target: "10"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "14",  Market: "Chợ Phạm Văn Hai", EstC: "24", Target: "19"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "4",  Market: "Chợ Hòa Hưng", EstC: "10", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "",  Market: "CHỢ CHÍ HÒA", EstC: "6", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "1",  Market: "Chợ Phường 2", EstC: "4", Target: "2"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "6",  Market: "Chợ Nguyễn Tri phương", EstC: "19", Target: "11"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Hai", CinR: "",  Market: "Chợ Lê Hồng Phong", EstC: "8", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "1",  Market: "Chợ tạm Huỳnh Văn Chính", EstC: "5", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "6",  Market: "Chợ Tân Phú 1", EstC: "6", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ tạm Thống Nhất", EstC: "5", Target: "3"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Tân Hương", EstC: "5", Target: "4"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "3",  Market: "Chợ hiệp Tân", EstC: "9", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "4",  Market: "Chợ Bình Long", EstC: "9", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Tư", CinR: "2",  Market: "Chợ Bình Trị Đông", EstC: "20", Target: "10"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Nghĩa Phát", EstC: "6", Target: "4"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "1",  Market: "Chợ Tân Bình", EstC: "30", Target: "11"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "3",  Market: "Chợ Bà Hoa", EstC: "11", Target: "6"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Bàu Cát", EstC: "4", Target: "2"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "6",  Market: "Chợ Hoàng Hoa Thám", EstC: "18", Target: "10"},
+            {NV: "Lâm Thị Cẩm Linh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Võ Thành Trang", EstC: "8", Target: "5"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "3",  Market: "Chợ Căn Cứ", EstC: "15", Target: "11"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "6",  Market: "Chợ Gò vấp", EstC: "13", Target: "9"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "2",  Market: "Chợ Tân Sơn Nhất", EstC: "12", Target: "8"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "",  Market: "Chợ An Hội", EstC: "4", Target: "2"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "",  Market: "Chợ Bảo Ngọc Tú", EstC: "4", Target: "2"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "14",  Market: "Chợ Nguyễn Đình Chiểu", EstC: "24", Target: "19"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "11",  Market: "Chợ Phú Nhuận", EstC: "28", Target: "13"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "",  Market: "Chợ Cô Giang", EstC: "4", Target: "3"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Tư", CinR: "23",  Market: "Chợ Nguyễn Đình Chiểu", EstC: "24", Target: "24"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Tư", CinR: "",  Market: "Chợ Vạn Kiếp", EstC: "8", Target: "5"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "7",  Market: "Chợ Cây Quéo", EstC: "12", Target: "11"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "5",  Market: "Chợ Phan Văn Trị", EstC: "7", Target: "6"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "6",  Market: "Chợ Bà Chiểu", EstC: "40", Target: "21"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "",  Market: "Chợ Văn Thánh", EstC: "8", Target: "4"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "",  Market: "Chợ phường 25", EstC: "11", Target: "4"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "7",  Market: "Chợ Linh Trung", EstC: "6", Target: "7"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "10",  Market: "Chợ Thủ Đức B", EstC: "14", Target: "12"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "2",  Market: "Chợ Tam Hà", EstC: "8", Target: "6"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "4",  Market: "Chợ Tam Bình", EstC: "9", Target: "8"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "",  Market: "Chợ Thủ Đức", EstC: "12", Target: "7"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Sáu", CinR: "",  Market: "Chợ Kiến Thiết", EstC: "5", Target: "3"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Bình Phước", EstC: "8", Target: "7"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "1",  Market: "Chợ Tạm Hiệp Bình Chánh", EstC: "5", Target: "4"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Tây Hòa", EstC: "2", Target: "2"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "5",  Market: "Chợ Hiệp Phú", EstC: "8", Target: "7"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Tăng Nhơn Phú A", EstC: "6", Target: "5"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "3",  Market: "Chợ Long Thạnh Mỹ", EstC: "4", Target: "3"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "",  Market: "Chợ Phước Long B", EstC: "4", Target: "3"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Bảy", CinR: "",  Market: "Chợ Tăng Nhơn Phú B", EstC: "6", Target: "3"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "8",  Market: "Chợ An Nhơn", EstC: "8", Target: "8"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "2",  Market: "Chợ Tạm Phạm Văn Bạch", EstC: "7", Target: "6"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "1",  Market: "Chợ Thạch Đà", EstC: "10", Target: "9"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Hai", CinR: "",  Market: "Chợ Hạnh Thông Tây", EstC: "5", Target: "4"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "13",  Market: "Chợ Trần Hữu Trang", EstC: "15", Target: "14"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "11",  Market: "Chợ Phú Nhuận", EstC: "28", Target: "13"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Ba", CinR: "",  Market: "Chợ Ga", EstC: "5", Target: "3"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "8",  Market: "Chợ Thanh Đa", EstC: "10", Target: "9"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "15",  Market: "Chợ Thị Nghè", EstC: "22", Target: "19"},
+            {NV: "Nguyễn Thị Sao Mai Anh", date: "Thứ Năm", CinR: "5",  Market: "Chợ Chiều võ duy ninh", EstC: "7", Target: "7"},
+            {NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "14",  Market: "Chợ Tân Định", EstC: "28", Target: "20"},
+            {NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "4",  Market: "Chợ Đakao", EstC: "8", Target: "6"},
+            {NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "",  Market: "Chợ Bến thành", EstC: "8", Target: "5"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "2",  Market: "Chợ Tân Thuận", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "Chợ Cư Xá Ngân Hàng", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "2",  Market: "Chợ Tân Kiểng 1", EstC: "6", Target: "5"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "Chợ Tân Kiểng 2", EstC: "6", Target: "4"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "4",  Market: "Chợ Tân Quy", EstC: "6", Target: "5"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "tạp hóa", EstC: "0", Target: "1"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "5",  Market: "Chợ Tân Mỹ", EstC: "6", Target: "6"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "2",  Market: "Chợ Phú Thuận", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "Chợ Phước Long", EstC: "4", Target: "2"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "20",  Market: "Chợ Xóm Chiếu", EstC: "20", Target: "20"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ Hãng Dệt", EstC: "3", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ Nguyễn Khoái", EstC: "5", Target: "5"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "7",  Market: "Chợ Xóm Củi", EstC: "12", Target: "10"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "1",  Market: "Chợ Ba Đình", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "11",  Market: "Chợ Rạch Ông", EstC: "18", Target: "14"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "",  Market: "Chợ Hưng Phú", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "",  Market: "Chợ Bình An", EstC: "3", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "11",  Market: "Chợ Trung Chánh", EstC: "12", Target: "12"},
+            {NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "",  Market: "Chợ Tân Chánh Hiệp", EstC: "10", Target: "8"},
+            {NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "",  Market: "Chợ Cây Me", EstC: "7", Target: "5"},
+            {NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "3",  Market: "Chợ Bà Điểm", EstC: "6", Target: "6"},
+            {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "2",  Market: "Chợ Vĩnh Lộc", EstC: "15", Target: "12"},
+            {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "1",  Market: "Chợ Vĩnh Lộc A", EstC: "8", Target: "8"},
+            {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Vĩnh Lộc B", EstC: "8", Target: "7"},
+            {NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "8",  Market: "Chợ Thái Bình", EstC: "25", Target: "16"},
+            {NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "1",  Market: "Chợ Cô Giang", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "1",  Market: "Chợ Cầu Kho", EstC: "5", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "6",  Market: "Chợ Yersin", EstC: "7", Target: "7"},
+            {NV: "Lương Thành Phát", date: "Thứ Hai", CinR: "1",  Market: "Chợ Tôn Thất Đạm", EstC: "12", Target: "6"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "1",  Market: "Chợ Bùi Phát", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "10",  Market: "Chợ Nguyễn Văn Trỗi", EstC: "18", Target: "14"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "2",  Market: "Chợ Vườn Chuối", EstC: "6", Target: "4"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "6",  Market: "Chợ Bàn Cờ", EstC: "12", Target: "9"},
+            {NV: "Lương Thành Phát", date: "Thứ Ba", CinR: "",  Market: "Chợ Lê Văn Sỹ", EstC: "7", Target: "4"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "4",  Market: "Chợ 200", EstC: "5", Target: "5"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "3",  Market: "Chợ Cầu Cống", EstC: "5", Target: "5"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "2",  Market: "Chợ Hãng Phân", EstC: "5", Target: "5"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ đường Đoàn Văn Bơ", EstC: "13", Target: "8"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ Long Kiểng", EstC: "5", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Tư", CinR: "",  Market: "Chợ Tôn Thất Thuyết", EstC: "4", Target: "2"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "5",  Market: "Chợ Bến Bình Đông", EstC: "10", Target: "9"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "8",  Market: "Chợ Nhị Thiên Đường", EstC: "8", Target: "8"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "",  Market: "Chợ Nguyễn Chế Nghĩa", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "",  Market: "Chợ Trần Văn Thành", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Năm", CinR: "6",  Market: "Chợ Phạm Thế Hiển", EstC: "10", Target: "9"},
+            {NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "13",  Market: "Chợ Hóc Môn", EstC: "14", Target: "14"},
+            {NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "2",  Market: "Chợ Tạm Tân Hiệp", EstC: "3", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "",  Market: "Chợ Tân Thới Nhì", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Sáu", CinR: "",  Market: "Chợ Bùi Môn", EstC: "4", Target: "3"},
+            {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Vĩnh Lộc", EstC: "15", Target: "10"},
+            {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Bà Hom", EstC: "5", Target: "4"},
+            {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Bà Lát", EstC: "5", Target: "4"},
+            {NV: "Lương Thành Phát", date: "Thứ Bảy", CinR: "",  Market: "Chợ Lê Minh Xuân", EstC: "5", Target: "4"}
         ];
 
-        const ALL_STAFFS = [
-            "Lâm Thị Cẩm Linh", "Lương Thành Phát", "Nguyễn Thị Sao Mai Anh"
-        ];
-
+        const ALL_STAFFS = ["Lâm Thị Cẩm Linh", "Lương Thành Phát", "Nguyễn Thị Sao Mai Anh"];
+        
         const ALL_MARKETS = [
-            "Chợ Tôn Thất Đạm",
-"Chợ Bến Thành",
-"Chợ Cầu Kho",
-"Chợ Nguyễn Cảnh Chân",
-"Chợ Cầu Ông Lãnh",
-"Chợ Yersin",
-"Chợ Cô Giang",
-"Chợ Đakao",
-"Chợ Thái Bình",
-"Chợ Tân Định",
-"Chợ An Bình",
-"Chợ Đo Đạc",
-"Chợ Bình Khánh",
-"Chợ Bình Trưng",
-"Chợ Tân Lập",
-"Chợ Cây Xoài",
-"Chợ Thạnh Mỹ Lợi",
-"Chợ Cát Lái",
-"Chợ Thảo Điền",
-"Chợ Bàn Cờ",
-"Chợ Vườn Chuối",
-"Chợ Bùi Phát",
-"Chợ Lê Văn Sỹ",
-"Chợ Nguyễn Văn Trỗi",
-"Chợ Hãng Dệt",
-"Chợ Nguyễn Khoái",
-"Chợ Hãng Phân",
-"Chợ Kho 11",
-"Chợ Xóm Chiếu",
-"Chợ Cầu Cống",
-"Chợ Tôn Thất Thuyết",
-"Chợ 200",
-"Chợ Đường Đoàn Văn Bơ",
-"Chợ Long Kiểng",
-"Chợ Cao Đạt",
-"Chợ Bầu Sen",
-"Chợ Hòa Bình",
-"Chợ An Đông",
-"Chợ Thực Phẩm An Đông",
-"Chợ Xã Tây",
-"Chợ Thuận Kiều",
-"Chợ Phùng Hưng",
-"Chợ Xóm Vôi",
-"Chợ Bình Tây",
-"Chợ Lê Tấn Kế",
-"Chợ Trần Bình",
-"Chợ Bình Tiên",
-"Chợ Minh Phụng",
-"Chợ An Dương Vương",
-"Chợ Hồ Trọng Quý",
-"Chợ Lò Gốm",
-"Chợ Phú Định",
-"Chợ Phú Lâm",
-"Chợ Tân Hoà Đông",
-"Chợ Phú Thuận",
-"Chợ Tạm Bùi Văn Ba",
-"Chợ Gò Ô Môi",
-"Chợ Phước Long",
-"Chợ Tân Thuận",
-"Chợ Rạch Đĩa",
-"Chợ Tân Kiểng 1",
-"Chợ Tân Kiểng 2",
-"Chợ Tân Mỹ",
-"Chợ Tân Quy",
-"Chợ Tân Thuận Đông",
-"Chợ Cư Xá Ngân Hàng",
-"Chợ Rạch Ông",
-"Chợ Phạm Thế Hiển",
-"Chợ Bình An",
-"Chợ Lò Than",
-"Chợ Bình Điền",
-"Chợ Phú Lợi 2",
-"Chợ Nhị Thiên Đường",
-"Chợ Trần Văn Thành",
-"Chợ Hưng Phú",
-"Chợ Ba Đình",
-"Chợ Xóm Củi",
-"Chợ Nguyễn Chế Nghĩa",
-"Chợ Bến Bình Đông",
-"Chợ Bình Đông",
-"Chợ Rạch Cát",
-"Chợ Vạn Nguyên",
-"Phú Định",
-"Chợ Hiệp Phú",
-"Chợ Kiến Thiết",
-"Chợ Long Phước",
-"Chợ Gò Công",
-"Chợ Long Thạnh Mỹ",
-"Chợ Long Trường",
-"Chợ Phước Bình",
-"Chợ Tây Hòa",
-"Chợ Nam Hoà ( Phước Long A)",
-"Chợ Hoa Cau",
-"Chợ Phước Long B",
-"Chợ Tăng Nhơn Phú B",
-"Chợ Tăng Nhơn Phú A",
-"Chợ Hồ Thị Kỷ",
-"Chợ Lê Hồng Phong",
-"Chợ Phường 2",
-"Chợ Da Bà Bầu ",
-"Chợ Nguyễn Tri Phương",
-"Chợ Nhật Tảo",
-"Chợ Phường 10",
-"Chợ Chí Hòa",
-"Chợ Hòa Hưng",
-"Chợ Nhỏ Tự Phát",
-"Chợ Thiếc",
-"Chợ Bình Thới",
-"Chợ Lãnh Binh Thăng",
-"Chợ Chim Xanh",
-"Chợ Hà Tôn Quyền",
-"Chợ Phú Thọ",
-"Chợ An Phú Đông",
-"Chợ Tạm Vườn Lài",
-"Chợ Vườn Lài",
-"Chợ Cầu",
-"Chợ Đông Quang",
-"Chợ Giãn Dân",
-"Chợ Hiệp Thành",
-"Chợ Ngã Ba Bầu",
-"Chợ Tân Chánh Hiệp",
-"Chợ Tạm Cây Sộp",
-"Chợ Hạt Điều",
-"Chợ Lạc Quang",
-"Chợ Thạnh Xuân",
-"Chợ Nam Long",
-"Chợ Thạnh Lộc",
-"Chợ Minh Phát",
-"Chợ Tạm Thới An",
-"Chợ An Sương",
-"Chợ Chiều Tô Ký",
-"Chợ Thới An",
-"Chợ Tô Ký",
-"Chợ Việt Hưng",
-"Chợ Bình Chánh",
-"Chợ Hưng Long",
-"Chợ Lê Minh Xuân",
-"Chợ Bà Lát",
-"Chợ Cầu Xáng",
-"Chợ Đệm",
-"Chợ Vĩnh Lộc A",
-"Chợ Vĩnh Lộc B",
-"Chợ Vĩnh Lộc",
-"Chợ Dĩa Tân Tạo",
-"Chợ Khu Phố 2",
-"Chợ Kiến Đức",
-"Chợ Bình Hưng Hoà",
-"Chợ Bình Long",
-"Chợ Bình Thành",
-"Chợ Gò Xoài",
-"Chợ Kênh 19/5",
-"Chợ Phạm Đăng Giảng",
-"Chợ Ngã Tư Bốn Xã",
-"Chợ Bình Trị Đông",
-"Chợ Đất Mới",
-"Chợ An Lạc",
-"Chợ Bà Hom",
-"Chợ Lê Đình Cẩn",
-"Chợ Bà Chiểu",
-"Chợ Vạn Kiếp",
-"Chợ Cây Quéo",
-"Chợ Phan Văn Trị",
-"Chợ Tạm Nguyễn Xí",
-"Chợ Thị Nghè",
-"Chợ Chiều Võ Duy Ninh",
-"Chợ Phường 25",
-"Chợ Văn Thánh",
-"Chợ Thanh Đa",
-"Chợ An Thới Đông",
-"Bình Khánh",
-"Chợ Hòa Hiệp",
-"Chợ Lý Nhơn",
-"Chợ Đồng Hòa",
-"Chợ Bình Mỹ",
-"Phú Hòa Đông",
-"Chợ Tân Phú Trung",
-"Chợ Tân Thạnh Đông",
-"Chợ Củ Chi",
-"Chợ Tân Thông Hội",
-"Chợ Trung An",
-"Chợ Tân Sơn Nhất",
-"Chợ Căn Cứ",
-"Chợ Gò Vấp",
-"Chợ Thạch Đà",
-"Chợ Hạnh Thông Tây",
-"Chợ An Hội",
-"Chợ Xóm Mới",
-"Chợ An Nhơn",
-"Chợ Bà Điểm",
-"Chợ Đông Thạnh",
-"Chợ Tạm Tân Hiệp",
-"Chợ Trung Chánh",
-"Chợ Hóc Môn",
-"Chợ Bùi Môn",
-"Chợ Cây Me",
-"Chợ Tân Thới Nhì",
-"Chợ Nhị Xuân",
-"Chợ Trần Văn Mười",
-"Chợ Xuân Thới Thượng",
-"Chợ Ấp 3",
-"Chợ Cầu Kinh",
-"Chợ Bà Chồi",
-"Chợ Phú Xuân",
-"Chợ Nhơn Đức",
-"Chợ Phú Lễ",
-"Chợ Bờ Băng",
-"Chợ Tạm Phước Kiểng",
-"Chợ Phước Lộc",
-"Chợ Cô Giang",
-"Chợ Nguyễn Đình Chiểu",
-"Chợ Ga",
-"Chợ Trần Hữu Trang",
-"Chợ Phú Nhuận",
-"Chợ Phạm Văn Hai",
-"Chợ Nam Hòa",
-"Chợ Nghĩa Phát",
-"Chợ Ông Hoàng",
-"Chợ Tân Bình",
-"Chợ Tân Hưng",
-"Chợ Tân Phước",
-"Chợ Trần Văn Quang",
-"Chợ Bàu Cát",
-"Chợ Bà Hoa",
-"Chợ Hoàng Hoa Thám",
-"Chợ Võ Thành Trang",
-"Chợ Bảo Ngọc Tú",
-"Chợ Tân Trụ",
-"Chợ Tạm Phạm Văn Bạch",
-"Chợ Hiệp Tân",
-"Chợ Phường 20",
-"Chợ Hoàng Ngọc Phách",
-"Chợ Phú Trung",
-"Chợ Tạm Huỳnh Văn Chính",
-"Chợ Phường 17",
-"Chợ Tạm Thống Nhất",
-"Chợ Tân Hương",
-"Chợ Tân Phú 1",
-"Chợ Sơn Kỳ",
-"Chợ Tam Bình",
-"Chợ Từ Đức",
-"Chợ Bình Triệu",
-"Chợ Hiệp Bình Chánh",
-"Chợ Tạm Hiệp Bình Chánh",
-"Chợ Bình Phước",
-"Chợ Thủ Đức A",
-"Chợ Thủ Đức B",
-"Chợ Thủ Đức",
-"Chợ Linh Trung",
-"Chợ Linh Xuân",
-"Chợ Xuân Hiệp",
-"Chợ Tam Hà",
+            "Chợ Tôn Thất Đạm", "Chợ Bến Thành", "Chợ Cầu Kho", "Chợ Nguyễn Cảnh Chân", "Chợ Cầu Ông Lãnh",
+            "Chợ Yersin", "Chợ Cô Giang", "Chợ Đakao", "Chợ Thái Bình", "Chợ Tân Định", "Chợ An Bình",
+            "Chợ Đo Đạc", "Chợ Bình Khánh", "Chợ Bình Trưng", "Chợ Tân Lập", "Chợ Cây Xoài", "Chợ Thạnh Mỹ Lợi",
+            "Chợ Cát Lái", "Chợ Thảo Điền", "Chợ Bàn Cờ", "Chợ Vườn Chuối", "Chợ Bùi Phát", "Chợ Lê Văn Sỹ",
+            "Chợ Nguyễn Văn Trỗi", "Chợ Hãng Dệt", "Chợ Nguyễn Khoái", "Chợ Hãng Phân", "Chợ Kho 11",
+            "Chợ Xóm Chiếu", "Chợ Cầu Cống", "Chợ Tôn Thất Thuyết", "Chợ 200", "Chợ Đường Đoàn Văn Bơ",
+            "Chợ Long Kiểng", "Chợ Cao Đạt", "Chợ Bầu Sen", "Chợ Hòa Bình", "Chợ An Đông", "Chợ Thực Phẩm An Đông",
+            "Chợ Xã Tây", "Chợ Thuận Kiều", "Chợ Phùng Hưng", "Chợ Xóm Vôi", "Chợ Bình Tây", "Chợ Lê Tấn Kế",
+            "Chợ Trần Bình", "Chợ Bình Tiên", "Chợ Minh Phụng", "Chợ An Dương Vương", "Chợ Hồ Trọng Quý",
+            "Chợ Lò Gốm", "Chợ Phú Định", "Chợ Phú Lâm", "Chợ Tân Hoà Đông", "Chợ Phú Thuận", "Chợ Tạm Bùi Văn Ba",
+            "Chợ Gò Ô Môi", "Chợ Phước Long", "Chợ Tân Thuận", "Chợ Rạch Đĩa", "Chợ Tân Kiểng 1", "Chợ Tân Kiểng 2",
+            "Chợ Tân Mỹ", "Chợ Tân Quy", "Chợ Tân Thuận Đông", "Chợ Cư Xá Ngân Hàng", "Chợ Rạch Ông",
+            "Chợ Phạm Thế Hiển", "Chợ Bình An", "Chợ Lò Than", "Chợ Bình Điền", "Chợ Phú Lợi 2", "Chợ Nhị Thiên Đường",
+            "Chợ Trần Văn Thành", "Chợ Hưng Phú", "Chợ Ba Đình", "Chợ Xóm Củi", "Chợ Nguyễn Chế Nghĩa",
+            "Chợ Bến Bình Đông", "Chợ Bình Đông", "Chợ Rạch Cát", "Chợ Vạn Nguyên", "Phú Định", "Chợ Hiệp Phú",
+            "Chợ Kiến Thiết", "Chợ Long Phước", "Chợ Gò Công", "Chợ Long Thạnh Mỹ", "Chợ Long Trường", "Chợ Phước Bình",
+            "Chợ Tây Hòa", "Chợ Nam Hoà ( Phước Long A)", "Chợ Hoa Cau", "Chợ Phước Long B", "Chợ Tăng Nhơn Phú B",
+            "Chợ Tăng Nhơn Phú A", "Chợ Hồ Thị Kỷ", "Chợ Lê Hồng Phong", "Chợ Phường 2", "Chợ Da Bà Bầu ",
+            "Chợ Nguyễn Tri Phương", "Chợ Nhật Tảo", "Chợ Phường 10", "Chợ Chí Hòa", "Chợ Hòa Hưng", "Chợ Nhỏ Tự Phát",
+            "Chợ Thiếc", "Chợ Bình Thới", "Chợ Lãnh Binh Thăng", "Chợ Chim Xanh", "Chợ Hà Tôn Quyền", "Chợ Phú Thọ",
+            "Chợ An Phú Đông", "Chợ Tạm Vườn Lài", "Chợ Vườn Lài", "Chợ Cầu", "Chợ Đông Quang", "Chợ Giãn Dân",
+            "Chợ Hiệp Thành", "Chợ Ngã Ba Bầu", "Chợ Tân Chánh Hiệp", "Chợ Tạm Cây Sộp", "Chợ Hạt Điều", "Chợ Lạc Quang",
+            "Chợ Thạnh Xuân", "Chợ Nam Long", "Chợ Thạnh Lộc", "Chợ Minh Phát", "Chợ Tạm Thới An", "Chợ An Sương",
+            "Chợ Chiều Tô Ký", "Chợ Thới An", "Chợ Tô Ký", "Chợ Việt Hưng", "Chợ Bình Chánh", "Chợ Hưng Long",
+            "Chợ Lê Minh Xuân", "Chợ Bà Lát", "Chợ Cầu Xáng", "Chợ Đệm", "Chợ Vĩnh Lộc A", "Chợ Vĩnh Lộc B",
+            "Chợ Vĩnh Lộc", "Chợ Dĩa Tân Tạo", "Chợ Khu Phố 2", "Chợ Kiến Đức", "Chợ Bình Hưng Hoà", "Chợ Bình Long",
+            "Chợ Bình Thành", "Chợ Gò Xoài", "Chợ Kênh 19/5", "Chợ Phạm Đăng Giảng", "Chợ Ngã Tư Bốn Xã",
+            "Chợ Bình Trị Đông", "Chợ Đất Mới", "Chợ An Lạc", "Chợ Bà Hom", "Chợ Lê Đình Cẩn", "Chợ Bà Chiểu",
+            "Chợ Vạn Kiếp", "Chợ Cây Quéo", "Chợ Phan Văn Trị", "Chợ Tạm Nguyễn Xí", "Chợ Thị Nghè",
+            "Chợ Chiều Võ Duy Ninh", "Chợ Phường 25", "Chợ Văn Thánh", "Chợ Thanh Đa", "Chợ An Thới Đông", "Bình Khánh",
+            "Chợ Hòa Hiệp", "Chợ Lý Nhơn", "Chợ Đồng Hòa", "Chợ Bình Mỹ", "Phú Hòa Đông", "Chợ Tân Phú Trung",
+            "Chợ Tân Thạnh Đông", "Chợ Củ Chi", "Chợ Tân Thông Hội", "Chợ Trung An", "Chợ Tân Sơn Nhất", "Chợ Căn Cứ",
+            "Chợ Gò Vấp", "Chợ Thạch Đà", "Chợ Hạnh Thông Tây", "Chợ An Hội", "Chợ Xóm Mới", "Chợ An Nhơn",
+            "Chợ Bà Điểm", "Chợ Đông Thạnh", "Chợ Tạm Tân Hiệp", "Chợ Trung Chánh", "Chợ Hóc Môn", "Chợ Bùi Môn",
+            "Chợ Cây Me", "Chợ Tân Thới Nhì", "Chợ Nhị Xuân", "Chợ Trần Văn Mười", "Chợ Xuân Thới Thượng", "Chợ Ấp 3",
+            "Chợ Cầu Kinh", "Chợ Bà Chồi", "Chợ Phú Xuân", "Chợ Nhơn Đức", "Chợ Phú Lễ", "Chợ Bờ Băng",
+            "Chợ Tạm Phước Kiểng", "Chợ Phước Lộc", "Chợ Cô Giang", "Chợ Nguyễn Đình Chiểu", "Chợ Ga",
+            "Chợ Trần Hữu Trang", "Chợ Phú Nhuận", "Chợ Phạm Văn Hai", "Chợ Nam Hòa", "Chợ Nghĩa Phát", "Chợ Ông Hoàng",
+            "Chợ Tân Bình", "Chợ Tân Hưng", "Chợ Tân Phước", "Chợ Trần Văn Quang", "Chợ Bàu Cát", "Chợ Bà Hoa",
+            "Chợ Hoàng Hoa Thám", "Chợ Võ Thành Trang", "Chợ Bảo Ngọc Tú", "Chợ Tân Trụ", "Chợ Tạm Phạm Văn Bạch",
+            "Chợ Hiệp Tân", "Chợ Phường 20", "Chợ Hoàng Ngọc Phách", "Chợ Phú Trung", "Chợ Tạm Huỳnh Văn Chính",
+            "Chợ Phường 17", "Chợ Tạm Thống Nhất", "Chợ Tân Hương", "Chợ Tân Phú 1", "Chợ Sơn Kỳ", "Chợ Tam Bình",
+            "Chợ Từ Đức", "Chợ Bình Triệu", "Chợ Hiệp Bình Chánh", "Chợ Tạm Hiệp Bình Chánh", "Chợ Bình Phước",
+            "Chợ Thủ Đức A", "Chợ Thủ Đức B", "Chợ Thủ Đức", "Chợ Linh Trung", "Chợ Linh Xuân", "Chợ Xuân Hiệp", "Chợ Tam Hà"
         ];
 
-        // --- BƯỚC 2: BẠN DÁN LINK GOOGLE APP SCRIPT VÀO ĐÂY ---
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwE_eLniZV0Rh-Z5pzRPOof02FH7nvlSclQzULWMkbJ5Bbkpe6Tjg45_TCgSQkzDGDH/exec'; 
+        // --- BƯỚC 2: LINK GOOGLE APP SCRIPT ---
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwE_eLniZV0Rh-Z5pzRPOof02FH7nvlScIQzULWMkbJ5Bbkpe6Tjg45_TCgSQkzmXU_bA/exec'; 
 
         // ==============================================================
-        // CODE HỆ THỐNG - KHÔNG CẦN CHỈNH SỬA PHẦN DƯỚI NÀY
-        // ==============================================================
-
-        // Nạp Dropdown
+        
+        // Nạp Dữ Liệu Khởi Tạo
         document.getElementById('staff-name').innerHTML = '<option value="" disabled selected>-- Chọn Nhân Viên --</option>' + ALL_STAFFS.map(staff => `<option value="${staff}">${staff}</option>`).join('');
         document.getElementById('market-suggestions').innerHTML = ALL_MARKETS.map(market => `<option value="${market}"></option>`).join('');
         document.getElementById('work-date').valueAsDate = new Date();
@@ -584,83 +366,110 @@
             return plan ? parseInt(plan.Target || 0) : 0; 
         }
 
+        // --- LOGIC TẠO DANH SÁCH CHỢ ĐỘNG THEO NGÀY ---
+        function renderRouteMarkets() {
+            const dateInput = document.getElementById('work-date').value;
+            const staff = document.getElementById('staff-name').value;
+            const container = document.getElementById('route-markets-list');
+            container.innerHTML = '';
+
+            if(!dateInput || !staff) return;
+
+            const dateObj = new Date(dateInput);
+            const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+            const strThu = days[dateObj.getDay()];
+
+            // Lọc ra các chợ nằm trong tuyến của nhân viên vào thứ đó
+            const planned = ROUTE_PLAN.filter(p => p.NV.toUpperCase() === staff.toUpperCase() && p.date.toUpperCase() === strThu.toUpperCase());
+            
+            planned.forEach(p => addMarketRow(p.Market, p.Target));
+            if(planned.length === 0) {
+                container.innerHTML = '<p style="font-size:0.85rem; color:#94a3b8; font-style:italic;">Không có lịch đi tuyến cố định vào ngày này.</p>';
+            }
+        }
+
+        /* CẬP NHẬT: THU HẸP Ô SỐ TRONG GIAO DIỆN NHẬP */
+        function addMarketRow(marketName = '', target = 0) {
+            const container = document.getElementById('route-markets-list');
+            if(container.querySelector('p')) container.innerHTML = ''; 
+
+            const row = document.createElement('div');
+            row.className = 'market-entry';
+
+            row.innerHTML = `
+                <div class="btn-remove" onclick="this.parentElement.remove()" title="Xóa chợ này">x</div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center; gap: 5px;">
+                    <input type="text" class="m-name" value="${marketName}" placeholder="Gõ tên chợ..." list="market-suggestions" required style="font-weight:bold; color:#1e40af; flex:1;">
+                    <span style="font-size:0.75rem; color:#d97706; font-weight:bold; white-space:nowrap; min-width: 70px; text-align:right;">Mục tiêu: <span class="m-target">${target}</span></span>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1; min-width:0;"><label style="font-size:0.7rem; text-align:center; display:block; margin-bottom:3px;">Đang PV</label><input type="number" class="m-pv" min="0" value="0" required></div>
+                    <div style="flex:1; min-width:0;"><label style="font-size:0.7rem; text-align:center; color:#059669; display:block; margin-bottom:3px;">Mở Mới</label><input type="number" class="m-moi" min="0" value="0" required style="border-color:#10b981; background-color:#ecfdf5;"></div>
+                    <div style="flex:1; min-width:0;"><label style="font-size:0.7rem; text-align:center; display:block; margin-bottom:3px;">Lên Đơn</label><input type="number" class="m-don" min="0" value="0" required></div>
+                </div>
+            `;
+
+            row.querySelector('.m-name').addEventListener('input', function() {
+                const staff = document.getElementById('staff-name').value;
+                row.querySelector('.m-target').innerText = getTargetForMarket(staff, this.value);
+            });
+
+            container.appendChild(row);
+        }
+
+        document.getElementById('work-date').addEventListener('change', renderRouteMarkets);
+        document.getElementById('staff-name').addEventListener('change', renderRouteMarkets);
+        document.getElementById('add-extra-market-btn').addEventListener('click', () => addMarketRow('', 0));
+
+
         let marketData = JSON.parse(localStorage.getItem('marketDashboardData')) || [];
 
         // --- HÀM CẬP NHẬT GIAO DIỆN CHÍNH ---
         function updateDashboard() {
             localStorage.setItem('marketDashboardData', JSON.stringify(marketData));
-            
-            // 1. CẬP NHẬT BẢNG & TÍNH TỔNG CỘNG
             let tableHTML = '';
-            let sumTuyen = 0, sumTarget = 0, sumMoi = 0, sumDon = 0, sumTotalSP = 0, sumM150 = 0, sumMien = 0;
-
+            
             marketData.forEach((item, index) => {
-                let totalSP = item.p1 + item.p2 + item.p3 + item.p4 + item.p5 + item.p6 + item.p7 + item.p8 + item.p9 + item.p10 + item.p11 + item.p12;
-                let target = getTargetForMarket(item.staff, item.name);
-                
-                sumTuyen += item.khTuyen;
-                sumTarget += target;
-                sumMoi += item.khMoi;
-                sumDon += item.khDon;
-                sumTotalSP += totalSP;
-                sumM150 += item.focM150;
-                sumMien += item.focMien;
-
                 const products = [
                     {name: 'MT 200g', val: item.p1}, {name: 'MT 450g', val: item.p2}, {name: 'MT 1kg', val: item.p3}, {name: 'MT 3kg', val: item.p4},
                     {name: 'MK ĐX 80g', val: item.p5}, {name: 'MK ĐX 200g', val: item.p6}, {name: 'MK ĐX 500g', val: item.p7}, {name: 'MK ĐX 1kg', val: item.p8},
                     {name: 'M.Dong 40g', val: item.p9}, {name: 'M.Dong 200g', val: item.p10}, {name: 'M.Dong 480g', val: item.p11}, {name: 'MT S.Lân 500g', val: item.p12}
                 ];
-                let soldStr = products.filter(p => p.val > 0).map(p => `• <b>${p.name}</b>: ${p.val}`).join('<br>');
+                let soldStr = products.filter(p => p.val > 0).map(p => `• ${p.name}: <b>${p.val}</b>`).join('<br>');
                 if(!soldStr) soldStr = '<span class="no-product">Chưa có SP</span>';
 
                 const dateObj = new Date(item.date);
                 const dateStr = `${('0'+dateObj.getDate()).slice(-2)}/${('0'+(dateObj.getMonth()+1)).slice(-2)}`;
 
+                let formattedMarkets = item.name.replace(/ \| /g, "<br>• ");
+
                 tableHTML += `
                     <tr>
-                        <td style="color:#64748b;">${dateStr}</td>
-                        <td>${item.staff}</td>
-                        <td style="font-weight:bold;">${item.name}</td>
-                        <td>${item.khTuyen}</td>
-                        <td class="highlight-target">${target}</td>
-                        <td class="highlight-actual">${item.khMoi}</td>
-                        <td>${item.khDon}</td>
-                        <td style="color:#1d4ed8; font-weight:bold;">${totalSP}</td>
+                        <td style="color:#64748b; text-align:center;">${dateStr}</td>
+                        <td style="text-align:center;">${item.staff}</td>
+                        <td style="font-size:0.8rem; font-weight:500;">• ${formattedMarkets}</td>
+                        <td class="narrow-col">${item.khTuyen}</td>
+                        <td class="narrow-col highlight-target">${item.target}</td>
+                        <td class="narrow-col highlight-actual">${item.khMoi}</td>
+                        <td class="narrow-col">${item.khDon}</td>
+                        <td style="color:#1d4ed8; font-weight:bold; text-align:center; font-size:1.1rem;">${item.totalSP}</td>
                         <td class="product-list">${soldStr}</td>
-                        <td>${item.focM150}</td>
-                        <td>${item.focMien}</td>
-                        <td><button class="delete-btn" onclick="deleteMarket(${index})">Xóa</button></td>
+                        <td class="narrow-col">${item.focM150}</td>
+                        <td class="narrow-col">${item.focMien}</td>
+                        <td style="text-align:center;"><button class="delete-btn" onclick="deleteMarket(${index})">Xóa</button></td>
                     </tr>
                 `;
             });
 
-            if(marketData.length > 0) {
-                tableHTML += `
-                    <tr style="background-color: #f8fafc; border-top: 2px solid #cbd5e1;">
-                        <td colspan="3" style="text-align: right; font-weight: bold; color: #1e293b;">TỔNG CỘNG ĐÃ NHẬP:</td>
-                        <td style="font-weight:bold;">${sumTuyen}</td>
-                        <td class="highlight-target">${sumTarget}</td>
-                        <td class="highlight-actual">${sumMoi}</td>
-                        <td style="font-weight:bold;">${sumDon}</td>
-                        <td style="color:#1d4ed8; font-weight:bold;">${sumTotalSP}</td>
-                        <td>-</td>
-                        <td style="font-weight:bold;">${sumM150}</td>
-                        <td style="font-weight:bold;">${sumMien}</td>
-                        <td></td>
-                    </tr>
-                `;
-            }
-
             document.querySelector('#data-table tbody').innerHTML = tableHTML;
 
-            // 2. CẬP NHẬT THẺ KPI
+            // Cập nhật Thẻ KPI
             let kpiHTML = '';
             ALL_STAFFS.forEach(staff => {
                 let staffData = marketData.filter(d => d.staff === staff);
                 let actualMoi = staffData.reduce((sum, d) => sum + d.khMoi, 0);
-                let totalSP = staffData.reduce((sum, d) => sum + (d.p1+d.p2+d.p3+d.p4+d.p5+d.p6+d.p7+d.p8+d.p9+d.p10+d.p11+d.p12), 0);
-                let targetMoi = staffData.reduce((sum, d) => sum + getTargetForMarket(d.staff, d.name), 0);
+                let totalSP = staffData.reduce((sum, d) => sum + d.totalSP, 0);
+                let targetMoi = staffData.reduce((sum, d) => sum + d.target, 0);
 
                 kpiHTML += `
                     <div class="kpi-card">
@@ -681,27 +490,44 @@
             document.getElementById('kpi-board').innerHTML = kpiHTML;
         }
 
-        // --- SUBMIT FORM & GỬI LÊN GOOGLE SHEETS ---
+        // --- SUBMIT FORM ---
         document.getElementById('market-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
+            let sumPV = 0, sumMoi = 0, sumDon = 0, sumTarget = 0;
+            let marketDetails = [];
+
+            document.querySelectorAll('.market-entry').forEach(entry => {
+                const mName = entry.querySelector('.m-name').value;
+                const mTarget = parseInt(entry.querySelector('.m-target').innerText) || 0;
+                const mPV = parseInt(entry.querySelector('.m-pv').value) || 0;
+                const mMoi = parseInt(entry.querySelector('.m-moi').value) || 0;
+                const mDon = parseInt(entry.querySelector('.m-don').value) || 0;
+
+                if(mName.trim() !== '') {
+                    sumTarget += mTarget;
+                    sumPV += mPV;
+                    sumMoi += mMoi;
+                    sumDon += mDon;
+                    marketDetails.push(`${mName} (${mPV}/${mMoi}/${mDon})`);
+                }
+            });
+
+            if(marketDetails.length === 0) {
+                alert("Vui lòng thêm ít nhất 1 chợ vào báo cáo!");
+                return;
+            }
+
             const btn = document.getElementById('add-btn');
             btn.innerText = 'Đang gửi dữ liệu lên mây...';
             btn.disabled = true;
 
             const getNum = (id) => parseInt(document.getElementById(id).value) || 0;
-            
             const dateInput = document.getElementById('work-date').value;
             const dateObj = new Date(dateInput);
             const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
             const strThu = days[dateObj.getDay()];
-            const strNgay = dateObj.getDate();
-            const strThang = dateObj.getMonth() + 1;
-            const strNam = dateObj.getFullYear();
-
             const staff = document.getElementById('staff-name').value;
-            const name = document.getElementById('market-name').value;
-            const target = getTargetForMarket(staff, name);
             
             const p1=getNum('p1'), p2=getNum('p2'), p3=getNum('p3'), p4=getNum('p4');
             const p5=getNum('p5'), p6=getNum('p6'), p7=getNum('p7'), p8=getNum('p8');
@@ -710,51 +536,49 @@
 
             const newMarket = {
                 date: dateInput,
-                thu: strThu, ngay: strNgay, thang: strThang, nam: strNam,
-                staff: staff, name: name, target: target, totalSP: totalSP,
-                khTuyen: getNum('kh-tuyen'), khMoi: getNum('kh-moi'), khDon: getNum('kh-don'),
+                thu: strThu, ngay: dateObj.getDate(), thang: dateObj.getMonth() + 1, nam: dateObj.getFullYear(),
+                staff: staff, 
+                name: marketDetails.join(' | '), 
+                target: sumTarget, 
+                totalSP: totalSP,
+                khTuyen: sumPV, khMoi: sumMoi, khDon: sumDon,
                 p1: p1, p2: p2, p3: p3, p4: p4, p5: p5, p6: p6, p7: p7, p8: p8,
                 p9: p9, p10: p10, p11: p11, p12: p12,
                 focM150: getNum('foc-m150'), focMien: getNum('foc-mien-kho')
             };
 
-            // Lưu nội bộ
             marketData.push(newMarket);
             updateDashboard();
 
-            // Đẩy lên Google Sheets
-            if(GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfyc.../exec') {
+            if(GOOGLE_SCRIPT_URL.includes('/exec')) {
                 fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newMarket)
                 })
-                .then(() => {
-                    document.querySelectorAll('#market-form input[type="number"]').forEach(inp => inp.value = 0);
-                    document.getElementById('market-name').value = '';
-                    document.getElementById('work-date').value = dateInput;
-                    btn.innerText = 'Thêm Số Liệu Chợ';
-                    btn.disabled = false;
-                })
+                .then(() => resetFormAndBtn(btn, dateInput, staff))
                 .catch(error => {
-                    console.error('Lỗi:', error);
-                    btn.innerText = 'Thêm Số Liệu Chợ';
-                    btn.disabled = false;
+                    resetFormAndBtn(btn, dateInput, staff);
                     alert("Đã lưu nội bộ nhưng lỗi kết nối Google Sheets!");
                 });
             } else {
-                // Giả lập lưu nếu chưa cài link
-                document.querySelectorAll('#market-form input[type="number"]').forEach(inp => inp.value = 0);
-                document.getElementById('market-name').value = '';
-                document.getElementById('work-date').value = dateInput;
-                btn.innerText = 'Thêm Số Liệu Chợ';
-                btn.disabled = false;
+                resetFormAndBtn(btn, dateInput, staff);
             }
         });
 
+        function resetFormAndBtn(btn, dateInput, staff) {
+            document.querySelectorAll('#market-form input[type="number"]').forEach(inp => inp.value = 0);
+            document.getElementById('work-date').value = dateInput;
+            document.getElementById('staff-name').value = staff;
+            btn.innerText = 'Gửi Báo Cáo Tuyến';
+            btn.disabled = false;
+            document.getElementById('route-markets-list').innerHTML = '';
+            renderRouteMarkets();
+        }
+
         function deleteMarket(index) {
-            if(confirm("Bạn có chắc chắn muốn xóa khỏi hiển thị? (Dữ liệu đã đẩy lên Google Sheets sẽ không bị xóa)")) { 
+            if(confirm("Bạn có chắc chắn muốn xóa khỏi hiển thị?")) { 
                 marketData.splice(index, 1); 
                 updateDashboard(); 
             }
@@ -767,25 +591,19 @@
             }
         });
 
-        // --- HÀM XUẤT EXCEL (CSV) ---
         function exportToExcel() {
             if(marketData.length === 0) { alert("Chưa có dữ liệu để xuất!"); return; }
-            
             let csvContent = "\uFEFF"; 
-            
             let headers = [
-                "Ngày", "Nhân Viên", "Tên Chợ", "KH đang phục vụ", "Mục Tiêu Mở Mới", "Thực Tế KH Mở Mới", "KH Lên Đơn", "Tổng SP Bán",
-                "Tươi 200g", "Tươi 450g", "Tươi 1kg", "Tươi 3kg", "Khô 80g", "Khô 200g", "Khô 500g", "Khô 1kg", 
-                "Dong 40g", "Dong 200g", "Dong 480g", "Tươi Song Lân 500g", "FOC M150 (lon)", "FOC Miến (Gói)"
+                "Ngày", "Nhân Viên", "Danh Sách Chợ Kèm Số Liệu (PV/Mới/Đơn)", "Tổng Đang PV", "Tổng Mục Tiêu", "Tổng Mở Mới", "Tổng Lên Đơn", "Tổng SP Bán",
+                "MT 200g", "MT 450g", "MT 1kg", "MT 3kg", "MK ĐX 80g", "MK ĐX 200g", "MK ĐX 500g", "MK ĐX 1kg", 
+                "M.Dong 40g", "M.Dong 200g", "M.Dong 480g", "MT S.Lân 500g", "FOC M150", "FOC Miến Gói"
             ];
             csvContent += headers.map(h => `"${h}"`).join(",") + "\n";
 
             marketData.forEach(item => {
-                let target = getTargetForMarket(item.staff, item.name);
-                let totalSP = item.p1 + item.p2 + item.p3 + item.p4 + item.p5 + item.p6 + item.p7 + item.p8 + item.p9 + item.p10 + item.p11 + item.p12;
-                
                 let row = [
-                    item.date, item.staff, item.name, item.khTuyen, target, item.khMoi, item.khDon, totalSP,
+                    item.date, item.staff, item.name, item.khTuyen, item.target, item.khMoi, item.khDon, item.totalSP,
                     item.p1, item.p2, item.p3, item.p4, item.p5, item.p6, item.p7, item.p8, 
                     item.p9, item.p10, item.p11, item.p12, item.focM150, item.focMien
                 ];
@@ -795,7 +613,7 @@
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `Bao_Cao_Tuyen_Cho_${new Date().toLocaleDateString('vi-VN').replace(/\//g,'-')}.csv`;
+            link.download = `Bao_Cao_Tuyen_Gop_${new Date().toLocaleDateString('vi-VN').replace(/\//g,'-')}.csv`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
