@@ -136,7 +136,7 @@
             <div class="main-header-box">
                 <div class="toggle-sidebar-container">
                     <button type="button" class="toggle-sidebar-btn" onclick="toggleSidebarPanel()" id="toggle-sidebar-btn">✕</button>
-                    <span class="toggle-text-hint" id="toggle-text-hint">Thu gọn khu vực nhập</span>
+                    <span class="toggle-text-hint" id="toggle-text-hint">Thu gọn khu vực nhập báo cáo</span>
                 </div>
                 <h1>Quản Lý KPI Tuyến Chợ truyền thống- Hồ Chí Minh</h1>
             </div>
@@ -145,7 +145,7 @@
 
             <div class="table-box">
                 <div class="cloud-export-box">
-                    <strong style="color: #1e3a8a; font-size:0.95rem;">☁️ Xuất Dữ Liệu Tổng Từ Google Sheets:</strong>
+                    <strong style="color: #1e3a8a; font-size:0.95rem;">☁️ Xuất Dữ Liệu Tổng Từ Hệ Thống:</strong>
                     <label>Từ: <input type="date" id="export-start"></label>
                     <label>Đến: <input type="date" id="export-end"></label>
                     <label>Nhân viên: <select id="export-staff-filter"></select></label>
@@ -356,9 +356,9 @@
             
             sidebar.classList.toggle('hidden');
             if (sidebar.classList.contains('hidden')) {
-                btn.innerText = '☰'; hint.innerText = 'Mở rộng trình đơn';
+                btn.innerText = '☰'; hint.innerText = 'Mở trình nhập dữ liệu';
             } else {
-                btn.innerText = '✕'; hint.innerText = 'Thu gọn khu vực nhập';
+                btn.innerText = '✕'; hint.innerText = 'Thu gọn trình nhập dữ liệu';
             }
         }
 
