@@ -568,7 +568,7 @@
         ];
 
         // --- BƯỚC 2: BẠN DÁN LINK GOOGLE APP SCRIPT VÀO ĐÂY ---
-        const GOOGLE_SCRIPT_URL = 'https://docs.google.com/spreadsheets/d/1A6oj665CMW9jdcvSZSO_0M0w7YYfIrGBU1N_JvnCQUw/edit?gid=0#gid=0; 
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwE_eLniZV0Rh-Z5pzRPOof02FH7nvlSclQzULWMkbJ5Bbkpe6Tjg45_TCgSQkzDGDH/exec'; 
 
         // ==============================================================
         // CODE HỆ THỐNG - KHÔNG CẦN CHỈNH SỬA PHẦN DƯỚI NÀY
